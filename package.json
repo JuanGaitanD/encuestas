@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "test": "node --test lib/survey.test.ts"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.5.16",
+    "@neondatabase/serverless": "^1.2.0",
     "next": "16.4.6",
     "react": "19.3.0",
     "react-dom": "19.3.0"
@@ -18,5 +21,7 @@
     "@types/react-dom": "^19",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@12.6.0"
+  "packageManager": "pnpm@12.6.0",
+  "license": "MIT",
+  "type": "module"
 }
