@@ -1,0 +1,47 @@
+import Link from "next/link";
+import { requireUser } from "@/lib/auth";
+import { q } from "@/lib/db";
+import { createSurvey } from "@/app/actions";
+
+export const metadata = { title: "Mis encuestas" };
+
+export default async function Panel() {
+  const user = await requireUser();
+  const surveys = await q<{ id: string; title: string; slug: string; published: boolean; n: number }>(
+    `SELECT s.id, s.title, s.slug, s.published,
+            (SELECT count(*)::int FROM responses r WHERE r.survey_id = s.id) AS n
+     FROM surveys s WHERE s.user_id = $1 ORDER BY s.updated_at DESC`,
+    [user.id],
+  );
+  return (
+    <>
+      <div className="row between">
+        <h1>Mis encuestas</h1>
+        <form action={createSurvey}>
+          <button className="btn">Nueva encuesta</button>
+        </form>
+      </div>
+      {surveys.length === 0 ? (
+        <p className="empty">Todavía no tienes encuestas. Crea la primera con el botón de arriba.</p>
+      ) : (
+        <ul className="list">
+          {surveys.map((s) => (
+            <li key={s.id} className="card row between">
+              <div>
+                <Link href={`/panel/${s.id}`} className="title">
+                  {s.title}
+                </Link>
+                <p className="muted">
+                  <span className={s.published ? "tag on" : "tag"}>{s.published ? "Publicada" : "Borrador"}</span> /e/{s.slug}
+                </p>
+              </div>
+              <Link href={`/panel/${s.id}/respuestas`} className="count">
+                <strong>{s.n}</strong> {s.n === 1 ? "respuesta" : "respuestas"}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
