@@ -1,0 +1,22 @@
+{
+  "nombre": "encuestas",
+  "tipo": "web",
+  "idioma": "es",
+  "lenguaje": "typescript",
+  "runtime": "node",
+  "framework": "next",
+  "gestor": "pnpm",
+  "comandos": {
+    "dev": "pnpm dev",
+    "test": "pnpm test",
+    "build": "pnpm build"
+  },
+  "tests": ["lib/**/*.test.ts"],
+  "capas": {
+    "dominio": "lib/survey.ts",
+    "datos": "lib/db.ts",
+    "aplicacion": "app/actions.ts",
+    "interfaz": "app/"
+  },
+  "ambitos": ["app", "datos", "auth", "encuesta", "docs"]
+}

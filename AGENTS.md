@@ -1,3 +1,30 @@
+# Encuestas
+
+Aplicación web de código abierto para crear, publicar y analizar encuestas. Next.js (App Router) con acciones de servidor y Postgres.
+
+## Idioma
+
+Español neutro en commits, PR, documentación y textos de interfaz. Identificadores de código en inglés.
+
+## Comandos
+
+- `pnpm dev`: desarrollo, con Postgres embebido en `.data/` si no hay `DATABASE_URL`.
+- `pnpm test`: pruebas del modelo (`node --test`).
+- `pnpm build`: compila y revisa tipos. Debe pasar antes de cada commit.
+
+## Convenciones
+
+- Conventional Commits. Ámbitos: `app`, `datos`, `auth`, `encuesta`, `docs`.
+- Toda regla sobre qué es una encuesta o una respuesta válida vive en `lib/survey.ts` y lleva prueba. El formulario y el servidor llaman a la misma función; no se duplica la validación.
+- Toda consulta que toca una encuesta desde el panel filtra por `user_id`. Para cargar una encuesta propia se usa `loadOwnSurvey`.
+- SQL con parámetros, nunca concatenado.
+- Sin dependencias nuevas para lo que resuelven unas líneas.
+
+## Qué no tocar
+
+- No guardar IP, agente de usuario ni identificadores de quien responde. Es una promesa de la página de privacidad.
+- No cambiar el formato de la definición (`Definition`) sin migrar las encuestas guardadas.
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 ## This is NOT the Next.js you know

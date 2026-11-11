@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Encuestas
 
-## Getting Started
+Aplicación web para crear encuestas, publicarlas con un enlace y descargar las respuestas en CSV. Cualquier persona puede registrarse y publicar la suya. Quien responde no necesita cuenta.
 
-First, run the development server:
+Nació para aplicar un cuestionario de investigación a estudiantes de Ingeniería de Software, y por eso cuida dos cosas: que el formulario se responda bien desde el celular y que los datos salgan listos para analizar.
+
+## Qué hace
+
+- Registro e ingreso con correo y contraseña.
+- Editor de encuestas por páginas, con ocho tipos de pregunta: texto corto, texto largo, número, opción única, opción múltiple (ambas con «Otro»), escala, matriz tipo Likert y texto informativo.
+- Presentación con consentimiento opcional: una casilla que hay que marcar para empezar.
+- Enlace público con la dirección que elijas (`/e/mi-encuesta`). Los borradores solo los ve su autor.
+- El avance de quien responde se guarda en su navegador, para que no lo pierda si recarga.
+- Resumen por pregunta y descarga en CSV, con una columna por pregunta y una por cada fila de las matrices. El código de cada pregunta lo decides tú, así que las columnas llevan nombres útiles para el análisis.
+- Importar y exportar la encuesta completa como JSON.
+
+## Qué guarda de quien responde
+
+Las respuestas y la fecha de envío. No guarda dirección IP, correo ni identificadores del navegador, y no carga analítica de terceros.
+
+## Ponerla a andar en tu máquina
+
+Necesitas Node 22.18 o superior y pnpm.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre <http://localhost:3000>. Sin configurar nada, los datos se guardan en un Postgres embebido ([PGlite](https://pglite.dev)) dentro de `.data/`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm test    # pruebas del modelo de encuesta
+pnpm build   # compilación de producción
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Desplegarla
 
-## Learn More
+Funciona en cualquier servicio que ejecute Next.js. Necesita una base de datos Postgres a la que se pueda llegar por HTTP con el controlador de [Neon](https://neon.com):
 
-To learn more about Next.js, take a look at the following resources:
+1. Crea una base de datos en Neon (desde Vercel: Storage → Neon).
+2. Define la variable de entorno `DATABASE_URL` con la cadena de conexión.
+3. Despliega. Las tablas se crean solas en la primera petición.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Cómo está hecha
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Ruta | Contenido |
+|---|---|
+| `lib/survey.ts` | Modelo de la encuesta: tipos, saneado de la definición, validación de respuestas y CSV. No depende de nada y tiene sus pruebas en `lib/survey.test.ts`. |
+| `lib/db.ts` | Conexión y esquema. |
+| `lib/auth.ts` | Contraseñas con scrypt y sesiones por cookie. |
+| `app/actions.ts` | Todas las acciones de servidor: cuentas, encuestas y envío de respuestas. |
+| `app/(sitio)/` | Portada, registro, ingreso y panel con el editor y los resultados. |
+| `app/e/[slug]/` | El formulario público. |
 
-## Deploy on Vercel
+La misma función (`checkAnswer`) valida cada respuesta en el navegador y en el servidor.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Límites conocidos
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- No hay recuperación de contraseña ni verificación de correo.
+- No hay límite de intentos de ingreso ni de envíos por persona. El formulario lleva un campo trampa contra bots simples y marca en el navegador que ya se respondió, pero alguien decidido puede responder dos veces.
+- No hay preguntas condicionales.
+
+## Licencia
+
+[MIT](LICENSE).
