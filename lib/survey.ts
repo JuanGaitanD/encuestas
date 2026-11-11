@@ -29,7 +29,8 @@ export type Question = {
   min?: number; // number
   max?: number;
 };
-export type Page = { title: string; description?: string; questions: Question[] };
+// shuffle: la página cambia de puesto, al azar, con las demás páginas marcadas.
+export type Page = { title: string; description?: string; shuffle?: boolean; questions: Question[] };
 export type Definition = { intro: string; consent?: string; thanks?: string; pages: Page[] };
 
 export type Answer = string | number | string[] | Record<string, number>;
@@ -128,6 +129,7 @@ export function parseDefinition(input: unknown): Definition {
     const result: Page = { title: str(page.title, 200) || `Página ${pi + 1}`, questions };
     const description = str(page.description, 4000);
     if (description) result.description = description;
+    if (page.shuffle === true) result.shuffle = true;
     return result;
   });
 
@@ -141,6 +143,37 @@ export function parseDefinition(input: unknown): Definition {
 }
 
 export const questions = (def: Definition) => def.pages.flatMap((p) => p.questions);
+
+/** Clave reservada dentro de las respuestas para el orden en que se mostraron las páginas («1-2-4-3»). */
+export const ORDER_KEY = "_orden";
+export const hasShuffle = (def: Definition) => def.pages.filter((p) => p.shuffle).length > 1;
+
+/** Orden de presentación: las páginas marcadas se barajan entre sus propios puestos; el resto no se mueve. */
+export function randomOrder(def: Definition, random: () => number = Math.random): number[] {
+  const order = def.pages.map((_, i) => i);
+  if (!hasShuffle(def)) return order;
+  const slots = order.filter((i) => def.pages[i].shuffle);
+  const picked = [...slots];
+  for (let i = picked.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [picked[i], picked[j]] = [picked[j], picked[i]];
+  }
+  slots.forEach((slot, k) => (order[slot] = picked[k]));
+  return order;
+}
+
+/** Un orden es válido si usa cada página una vez y solo mueve las marcadas. */
+export function validOrder(def: Definition, order: unknown): order is number[] {
+  if (!Array.isArray(order) || order.length !== def.pages.length) return false;
+  if (new Set(order).size !== order.length) return false;
+  const movable = hasShuffle(def);
+  return order.every(
+    (p, i) =>
+      Number.isInteger(p) && p >= 0 && p < def.pages.length &&
+      (p === i || (movable && def.pages[i].shuffle === true && def.pages[p].shuffle === true)),
+  );
+}
+export const orderLabel = (order: number[]) => order.map((i) => i + 1).join("-");
 
 const isEmpty = (v: unknown) =>
   v === undefined || v === null || v === "" || (Array.isArray(v) && v.length === 0) ||
@@ -216,8 +249,11 @@ const cell = (v: unknown) => {
 
 export function toCsv(def: Definition, rows: { id: string; created_at: string | Date; answers: Answers }[]): string {
   const cols = csvColumns(def);
-  const lines = [["id", "fecha", ...cols.map((c) => c.key)].join(",")];
+  const meta = hasShuffle(def) ? ["orden_paginas"] : [];
+  const lines = [["id", "fecha", ...meta, ...cols.map((c) => c.key)].join(",")];
   for (const r of rows)
-    lines.push([r.id, new Date(r.created_at).toISOString(), ...cols.map((c) => cell(c.get(r.answers)))].join(","));
+    lines.push(
+      [r.id, new Date(r.created_at).toISOString(), ...meta.map(() => cell(r.answers[ORDER_KEY])), ...cols.map((c) => cell(c.get(r.answers)))].join(","),
+    );
   return "﻿" + lines.join("\r\n") + "\r\n";
 }

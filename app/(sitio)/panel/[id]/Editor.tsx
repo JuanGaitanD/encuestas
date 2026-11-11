@@ -165,6 +165,17 @@ export function Editor({ survey }: { survey: Survey }) {
             Descripción (opcional)
             <textarea rows={2} value={page.description ?? ""} onChange={(e) => setPage(pi, { description: e.target.value })} />
           </label>
+          <label className="check">
+            <input type="checkbox" checked={!!page.shuffle} onChange={(e) => setPage(pi, { shuffle: e.target.checked })} />
+            Orden aleatorio: esta página intercambia su puesto, al azar, con las demás páginas marcadas
+          </label>
+          {page.shuffle && (
+            <small>
+              {def.pages.filter((p) => p.shuffle).length < 2
+                ? "Marca al menos otra página para que haya con cuál intercambiarla."
+                : "Cada persona verá las páginas marcadas en un orden sorteado. El orden queda en la columna «orden_paginas» del CSV."}
+            </small>
+          )}
 
           {page.questions.map((qu, qi) => (
             <fieldset key={qi} className="question stack">

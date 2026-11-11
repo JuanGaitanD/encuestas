@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { submitResponse } from "@/app/actions";
-import { OTHER, checkAnswer, type Answer, type Answers, type Definition, type Question } from "@/lib/survey";
+import { OTHER, checkAnswer, randomOrder, validOrder, type Answer, type Answers, type Definition, type Question } from "@/lib/survey";
 
 type Props = { slug: string; title: string; def: Definition; preview: boolean };
-type Saved = { step: number; answers: Answers; done?: boolean };
+type Saved = { step: number; answers: Answers; order?: number[]; done?: boolean };
 
 function Choice({ qu, value, set }: { qu: Question; value: Answer | undefined; set: (v: Answer | undefined) => void }) {
   const multi = qu.type === "multi";
@@ -110,6 +110,7 @@ export function Form({ slug, title, def, preview }: Props) {
   // step: -1 presentación, 0..n-1 páginas, n agradecimiento
   const [step, setStep] = useState(-1);
   const [answers, setAnswers] = useState<Answers>({});
+  const [order, setOrder] = useState<number[]>(() => def.pages.map((_, i) => i));
   const [accepted, setAccepted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [failure, setFailure] = useState("");
@@ -121,8 +122,13 @@ export function Form({ slug, title, def, preview }: Props) {
 
   // El avance se guarda en el navegador para no perderlo al recargar.
   useEffect(() => {
+    let saved: Saved | null = null;
     try {
-      const saved = JSON.parse(localStorage.getItem(key) ?? "null") as Saved | null;
+      saved = JSON.parse(localStorage.getItem(key) ?? "null") as Saved | null;
+    } catch {}
+    // El orden se sortea una vez por persona y se conserva si recarga.
+    setOrder(saved && validOrder(def, saved.order) ? saved.order : randomOrder(def));
+    try {
       if (saved?.done) setStep(last);
       else if (saved) {
         setAnswers(saved.answers ?? {});
@@ -131,10 +137,10 @@ export function Form({ slug, title, def, preview }: Props) {
       }
     } catch {}
     setLoaded(true);
-  }, [key, last]);
+  }, [key, last, def]);
   useEffect(() => {
-    if (loaded && step < last) localStorage.setItem(key, JSON.stringify({ step, answers } satisfies Saved));
-  }, [loaded, key, step, answers, last]);
+    if (loaded && step < last) localStorage.setItem(key, JSON.stringify({ step, answers, order } satisfies Saved));
+  }, [loaded, key, step, answers, order, last]);
 
   const go = (to: number) => {
     setStep(to);
@@ -142,8 +148,9 @@ export function Form({ slug, title, def, preview }: Props) {
     top.current?.scrollIntoView({ block: "start" });
   };
   const next = () => {
+    const page = def.pages[order[step]];
     const found: Record<string, string> = {};
-    for (const qu of def.pages[step].questions) {
+    for (const qu of page.questions) {
       const e = checkAnswer(qu, answers[qu.id]);
       if (e) found[qu.id] = e;
     }
@@ -153,7 +160,7 @@ export function Form({ slug, title, def, preview }: Props) {
     if (step < last - 1) return go(step + 1);
     if (preview) return go(last);
     start(async () => {
-      const r = await submitResponse(slug, answers, trap.current?.value ?? "");
+      const r = await submitResponse(slug, answers, trap.current?.value ?? "", order);
       if (!r.ok) return setFailure(r.error);
       localStorage.setItem(key, JSON.stringify({ step: last, answers: {}, done: true } satisfies Saved));
       go(last);
@@ -161,6 +168,7 @@ export function Form({ slug, title, def, preview }: Props) {
   };
 
   if (!loaded) return <div className="survey" />;
+  const shown = step >= 0 && step < last ? def.pages[order[step]] : null;
 
   return (
     <div className="survey" ref={top}>
@@ -191,9 +199,9 @@ export function Form({ slug, title, def, preview }: Props) {
           <p className="muted">
             Parte {step + 1} de {last}
           </p>
-          <h1>{def.pages[step].title}</h1>
-          {def.pages[step].description && <p className="pre">{def.pages[step].description}</p>}
-          {def.pages[step].questions.map((qu) =>
+          <h1>{shown!.title}</h1>
+          {shown!.description && <p className="pre">{shown!.description}</p>}
+          {shown!.questions.map((qu) =>
             qu.type === "info" ? (
               <p key={qu.id} className="pre info">
                 {qu.label}

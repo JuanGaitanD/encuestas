@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { q } from "@/lib/db";
-import { questions, type Answers, type Question } from "@/lib/survey";
+import { ORDER_KEY, hasShuffle, questions, type Answers, type Question } from "@/lib/survey";
 import { loadOwnSurvey } from "@/lib/own-survey";
 
 export const metadata = { title: "Respuestas" };
@@ -75,6 +75,17 @@ export default async function Page({ params }: PageProps<"/panel/[id]/respuestas
         <a className="btn" href={`/panel/${survey.id}/csv`}>Descargar CSV</a>
       </div>
       <p className="lead"><strong>{all.length}</strong> {all.length === 1 ? "respuesta recibida" : "respuestas recibidas"}</p>
+      {all.length > 0 && hasShuffle(survey.definition) && (
+        <section className="card">
+          <h2 className="qtitle">Orden en que se mostraron las páginas</h2>
+          <Bars
+            counts={[...new Set(all.map((a) => String(a[ORDER_KEY] ?? "sin registro")))]
+              .sort()
+              .map((o): [string, number] => [o, all.filter((a) => String(a[ORDER_KEY] ?? "sin registro") === o).length])}
+            total={all.length}
+          />
+        </section>
+      )}
       {all.length > 0 &&
         questions(survey.definition)
           .filter((qu) => qu.type !== "info")

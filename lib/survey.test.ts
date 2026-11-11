@@ -1,7 +1,7 @@
 // node --test lib/survey.test.ts
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { parseDefinition, toCsv, validateAnswers } from "./survey.ts";
+import { parseDefinition, randomOrder, toCsv, validOrder, validateAnswers } from "./survey.ts";
 
 const def = parseDefinition({
   intro: "Hola",
@@ -67,4 +67,24 @@ test("el CSV aplana la matriz y neutraliza fórmulas", () => {
   const [head, row] = csv.replace("﻿", "").trim().split("\r\n");
   assert.equal(head, "id,fecha,sem,uso,leng,conf,ae_a,ae_b,com");
   assert.equal(row, `r1,2026-11-11T00:00:00.000Z,8,,Python | Java,,1,3,"'=1+1, ""hola"""`);
+});
+
+test("el orden aleatorio solo mueve las páginas marcadas y queda en el CSV", () => {
+  const page = (id: string, shuffle?: boolean) => ({ title: id, shuffle, questions: [{ id, type: "short", label: id }] });
+  const d = parseDefinition({ pages: [page("a"), page("b", true), page("c"), page("d", true), page("e", true)] });
+  const seen = new Set<string>();
+  for (let i = 0; i < 300; i++) {
+    const o = randomOrder(d);
+    assert.ok(validOrder(d, o));
+    assert.equal(o[0], 0);
+    assert.equal(o[2], 2);
+    seen.add(o.join(""));
+  }
+  assert.equal(seen.size, 6); // aparecen las 3! permutaciones de las marcadas
+  assert.equal(validOrder(d, [2, 1, 0, 3, 4]), false); // mueve una página fija
+  assert.equal(validOrder(d, [0, 1, 2, 3, 3]), false); // repite
+  assert.equal(validOrder(d, [0, 1, 2, 3]), false); // falta una
+  assert.deepEqual(randomOrder(def), [0]); // sin páginas marcadas no cambia nada
+  const csv = toCsv(d, [{ id: "r", created_at: "2026-11-11T00:00:00Z", answers: { _orden: "1-4-3-5-2", a: "x" } }]);
+  assert.equal(csv.replace("﻿", "").trim().split("\r\n")[1], "r,2026-11-11T00:00:00.000Z,1-4-3-5-2,x,,,,");
 });

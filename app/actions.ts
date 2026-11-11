@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { q } from "@/lib/db";
 import { endSession, hashPassword, newId, newSlug, requireUser, startSession, verifyPassword } from "@/lib/auth";
-import { emptyDefinition, parseDefinition, validateAnswers, type Definition } from "@/lib/survey";
+import { ORDER_KEY, emptyDefinition, hasShuffle, orderLabel, parseDefinition, validOrder, validateAnswers, type Definition } from "@/lib/survey";
 
 export type FormState = { error?: string };
 export type Result = { ok: true } | { ok: false; error: string };
@@ -97,7 +97,7 @@ export async function deleteSurvey(id: string) {
 
 // ponytail: sin límite por IP ni captcha; el campo trampa frena los bots
 // simples. Añadir Turnstile o similar si una encuesta recibe abuso.
-export async function submitResponse(slug: string, raw: unknown, trap: string): Promise<Result> {
+export async function submitResponse(slug: string, raw: unknown, trap: string, order?: unknown): Promise<Result> {
   if (trap) return { ok: true };
   if (JSON.stringify(raw ?? {}).length > 200_000) return { ok: false, error: "La respuesta es demasiado grande." };
   const [survey] = await q<{ id: string; definition: Definition }>(
@@ -107,6 +107,12 @@ export async function submitResponse(slug: string, raw: unknown, trap: string): 
   if (!survey) return { ok: false, error: "Esta encuesta ya no recibe respuestas." };
   const checked = validateAnswers(survey.definition, raw);
   if (!checked.ok) return checked;
+  if (hasShuffle(survey.definition)) {
+    // El orden en que se vieron las páginas se guarda con la respuesta para poder analizar su efecto.
+    if (!validOrder(survey.definition, order))
+      return { ok: false, error: "No se pudo registrar el orden de las páginas. Recarga e inténtalo de nuevo." };
+    checked.answers[ORDER_KEY] = orderLabel(order);
+  }
   await q("INSERT INTO responses (id, survey_id, answers) VALUES ($1, $2, $3::jsonb)", [
     newId(),
     survey.id,
