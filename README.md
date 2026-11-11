@@ -12,6 +12,7 @@ Nació para aplicar un cuestionario de investigación a estudiantes de Ingenier�
 - Enlace público con la dirección que elijas (`/e/mi-encuesta`). Los borradores solo los ve su autor.
 - El avance de quien responde se guarda en su navegador, para que no lo pierda si recarga.
 - Resumen por pregunta y descarga en CSV, con una columna por pregunta y una por cada fila de las matrices. El código de cada pregunta lo decides tú, así que las columnas llevan nombres útiles para el análisis.
+- Orden aleatorio de páginas: marcas las que deben intercambiarse y cada persona las ve en un orden sorteado. El orden que le tocó a cada quien queda en la columna `orden_paginas` del CSV, para contrabalancear condiciones en un estudio y comprobar después si el orden influyó.
 - Importar y exportar la encuesta completa como JSON.
 
 ## Qué guarda de quien responde
