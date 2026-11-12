@@ -60,7 +60,7 @@ export default async function Home() {
               alt="La página de respuestas de una encuesta de ejemplo: el total recibido, el botón para descargar el CSV y el conteo de cada opción en barras."
               sizes="(min-width: 1024px) 640px, 92vw"
               preload
-              unoptimized
+              quality={90}
             />
           </div>
           <Celular>
@@ -69,7 +69,7 @@ export default async function Home() {
               alt="La misma encuesta en un celular: barra de avance y una pregunta con sus opciones en filas grandes, una de ellas marcada."
               sizes="(min-width: 1024px) 240px, 34vw"
               preload
-              unoptimized
+              quality={90}
             />
           </Celular>
         </Escena>
@@ -126,8 +126,8 @@ export default async function Home() {
             <p>Resumen por pregunta en pantalla y un CSV con una columna por ítem, listo para R, Python o una hoja de cálculo.</p>
           </div>
           <figure className="ficha">
-            <Image src={resumen} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="(min-width: 1024px) 680px, 92vw" className="no-movil" unoptimized />
-            <Image src={resumenMovil} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="92vw" className="solo-movil" unoptimized />
+            <Image src={resumen} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="(min-width: 1024px) 680px, 92vw" className="no-movil" quality={90} />
+            <Image src={resumenMovil} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="92vw" className="solo-movil" quality={90} />
             <figcaption>El resumen por pregunta, en pantalla.</figcaption>
           </figure>
           <figure className="ficha">
@@ -185,7 +185,7 @@ export default async function Home() {
           </Link>
         </div>
         <Celular>
-          <Image src={movilListo} alt="La pantalla final que ve quien responde: una marca de verificación y el mensaje de agradecimiento." sizes="260px" unoptimized />
+          <Image src={movilListo} alt="La pantalla final que ve quien responde: una marca de verificación y el mensaje de agradecimiento." sizes="260px" quality={90} />
         </Celular>
       </section>
     </div>

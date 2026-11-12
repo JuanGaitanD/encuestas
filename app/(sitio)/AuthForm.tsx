@@ -60,7 +60,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
           <strong>Haz tu encuesta</strong> y quédate con tus datos.
         </p>
         <Celular>
-          <Image src={matriz} alt="Una pregunta de matriz respondida desde un celular: cada frase con sus cinco niveles en una fila." sizes="230px" unoptimized />
+          <Image src={matriz} alt="Una pregunta de matriz respondida desde un celular: cada frase con sus cinco niveles en una fila." sizes="230px" quality={90} />
         </Celular>
       </aside>
     </div>
