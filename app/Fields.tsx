@@ -87,6 +87,17 @@ export function Field(props: Props) {
         </div>
       );
     }
+    case "select":
+      return (
+        <select className="pick" value={(value as string) ?? ""} onChange={(e) => set(e.target.value || undefined)} {...aria}>
+          <option value="">Elige una opción</option>
+          {(qu.options ?? []).map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+        </select>
+      );
     case "single":
     case "multi":
       return <Choice {...props} />;

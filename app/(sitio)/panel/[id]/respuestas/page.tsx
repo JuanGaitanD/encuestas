@@ -1,4 +1,7 @@
 import Link from "next/link";
+import { deleteResponse } from "@/app/actions";
+import { ConfirmButton } from "@/app/ConfirmButton";
+import { Icon } from "@/app/Icon";
 import { q } from "@/lib/db";
 import { ORDER_KEY, hasShuffle, questions, type Answers, type Question } from "@/lib/survey";
 import { loadOwnSurvey } from "@/lib/own-survey";
@@ -24,7 +27,7 @@ function Bars({ counts, total }: { counts: [string, number][]; total: number }) 
 function Summary({ qu, all }: { qu: Question; all: Answers[] }) {
   const values = all.map((a) => a[qu.id]).filter((v) => v !== undefined);
   const n = <p className="muted">{values.length} respuestas</p>;
-  if (qu.type === "single" || qu.type === "multi") {
+  if (qu.type === "single" || qu.type === "multi" || qu.type === "select") {
     const flat = values.flatMap((v) => (Array.isArray(v) ? v : [v as string]));
     const labels = [...(qu.options ?? []), ...(qu.other ? ["Otro"] : [])];
     const counts = labels.map((l): [string, number] => [l, flat.filter((v) => (l === "Otro" ? !qu.options!.includes(v) : v === l)).length]);
@@ -65,11 +68,17 @@ function Summary({ qu, all }: { qu: Question; all: Answers[] }) {
 
 export default async function Page({ params }: PageProps<"/panel/[id]/respuestas">) {
   const survey = await loadOwnSurvey((await params).id);
-  const rows = await q<{ answers: Answers }>("SELECT answers FROM responses WHERE survey_id = $1", [survey.id]);
+  const rows = await q<{ id: string; created_at: string | Date; answers: Answers }>(
+    "SELECT id, created_at, answers FROM responses WHERE survey_id = $1 ORDER BY created_at DESC",
+    [survey.id],
+  );
+  const when = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Bogota" });
   const all = rows.map((r) => r.answers);
   return (
     <div className="stack">
-      <Link href={`/panel/${survey.id}`}>← Editar encuesta</Link>
+      <Link href={`/panel/${survey.id}`} className="textlink">
+        <Icon name="back" size={18} /> Editar encuesta
+      </Link>
       <div className="row between">
         <h1>{survey.title}</h1>
         <a className="btn" href={`/panel/${survey.id}/csv`}>Descargar CSV</a>
@@ -85,6 +94,30 @@ export default async function Page({ params }: PageProps<"/panel/[id]/respuestas
             total={all.length}
           />
         </section>
+      )}
+      {rows.length > 0 && (
+        <details className="panel">
+          <summary>Respuestas una por una ({rows.length})</summary>
+          <div className="stack">
+            <p className="muted">Borra aquí las pruebas o los envíos que no deban contar. El código es el mismo de la columna «id» del CSV. Hora de Colombia.</p>
+            <ul className="records">
+              {rows.map((r) => (
+                <li key={r.id}>
+                  <span className="grow">
+                    {when.format(new Date(r.created_at))} <span className="muted mono">{r.id.slice(0, 8)}</span>
+                  </span>
+                  <ConfirmButton
+                    action={deleteResponse.bind(null, survey.id, r.id)}
+                    label={`Borrar la respuesta ${r.id.slice(0, 8)}`}
+                    message={`¿Borrar la respuesta del ${when.format(new Date(r.created_at))}? No se puede deshacer.`}
+                  >
+                    <Icon name="trash" size={18} />
+                  </ConfirmButton>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </details>
       )}
       {all.length > 0 &&
         questions(survey.definition)

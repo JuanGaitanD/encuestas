@@ -14,6 +14,7 @@ const HINTS: Record<QType, string> = {
   long: "Varias líneas: una opinión, un comentario.",
   number: "Una cifra, con mínimo y máximo si quieres.",
   single: "Elige una sola de la lista.",
+  select: "Una sola, en una lista que se despliega. Útil si hay muchas.",
   multi: "Puede marcar varias de la lista.",
   scale: "Del 1 al 5 (o los puntos que quieras).",
   matrix: "Varias frases que se responden con la misma escala.",
@@ -171,7 +172,7 @@ function QuestionCard(p: {
         </label>
       )}
 
-      {(qu.type === "single" || qu.type === "multi") && (
+      {(qu.type === "single" || qu.type === "multi" || qu.type === "select") && (
         <fieldset className="group">
           <legend>Opciones</legend>
           <ListEditor
@@ -183,9 +184,11 @@ function QuestionCard(p: {
             onAdd={() => set({ options: [...options, ""] })}
             onRemove={(i) => set({ options: without(options, i) })}
           />
-          <Switch checked={!!qu.other} onChange={(v) => set({ other: v })}>
-            Añadir «Otro» con espacio para escribir
-          </Switch>
+          {qu.type !== "select" && (
+            <Switch checked={!!qu.other} onChange={(v) => set({ other: v })}>
+              Añadir «Otro» con espacio para escribir
+            </Switch>
+          )}
         </fieldset>
       )}
 
@@ -353,7 +356,7 @@ export function Editor({ survey }: { survey: Survey }) {
   };
   const blank = (type: QType): Question => {
     const q: Question = { id: freeId(), type, label: "" };
-    if (type === "single" || type === "multi") q.options = ["", ""];
+    if (type === "single" || type === "multi" || type === "select") q.options = ["", ""];
     if (type === "matrix") {
       q.columns = PRESETS[0][1];
       q.rows = [{ id: "f1", label: "" }];

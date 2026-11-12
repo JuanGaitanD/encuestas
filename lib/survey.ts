@@ -6,6 +6,7 @@ export const TYPES = {
   long: "Texto largo",
   number: "Número",
   single: "Opción única",
+  select: "Lista desplegable",
   multi: "Opción múltiple",
   scale: "Escala",
   matrix: "Matriz (varias filas, misma escala)",
@@ -19,7 +20,7 @@ export type Question = {
   label: string;
   help?: string;
   required?: boolean;
-  options?: string[]; // single, multi
+  options?: string[]; // single, select, multi
   other?: boolean; // single, multi: admite «Otro: …»
   rows?: { id: string; label: string }[]; // matrix
   columns?: string[]; // matrix
@@ -90,11 +91,11 @@ export function parseDefinition(input: unknown): Definition {
       if (help) out.help = help;
       if (type !== "info" && s.required === true) out.required = true;
 
-      if (type === "single" || type === "multi") {
+      if (type === "single" || type === "multi" || type === "select") {
         out.options = list(s.options, 60, 300);
-        if (out.options.length < 2 && !s.other) throw new Error(`${where}: necesita al menos dos opciones.`);
+        if (out.options.length < 2 && !(s.other && type !== "select")) throw new Error(`${where}: necesita al menos dos opciones.`);
         if (new Set(out.options).size !== out.options.length) throw new Error(`${where}: hay opciones repetidas.`);
-        if (s.other === true) out.other = true;
+        if (s.other === true && type !== "select") out.other = true;
       }
       if (type === "matrix") {
         out.columns = list(s.columns, 11, 80);
@@ -197,6 +198,7 @@ export function checkAnswer(q: Question, v: unknown): string | null {
       if (q.max !== undefined && v > q.max) return `El máximo es ${q.max}.`;
       return null;
     case "single":
+    case "select":
       return choiceOk(q, v) ? null : "Elige una de las opciones.";
     case "multi":
       // Como mucho un «Otro»: sin este tope, una respuesta podría traer miles de textos libres.

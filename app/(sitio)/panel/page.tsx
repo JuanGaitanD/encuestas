@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { q } from "@/lib/db";
-import { createSurvey } from "@/app/actions";
+import { createSurvey, deleteSurvey } from "@/app/actions";
+import { ConfirmButton } from "@/app/ConfirmButton";
+import { Icon } from "@/app/Icon";
 
 export const metadata = { title: "Mis encuestas" };
 
@@ -33,7 +35,7 @@ export default async function Panel({ searchParams }: PageProps<"/panel">) {
         <ul className="list">
           {surveys.map((s) => (
             <li key={s.id} className="card row between">
-              <div>
+              <div className="grow">
                 <Link href={`/panel/${s.id}`} className="title">
                   {s.title}
                 </Link>
@@ -44,6 +46,13 @@ export default async function Panel({ searchParams }: PageProps<"/panel">) {
               <Link href={`/panel/${s.id}/respuestas`} className="count">
                 <strong>{s.n}</strong> {s.n === 1 ? "respuesta" : "respuestas"}
               </Link>
+              <ConfirmButton
+                action={deleteSurvey.bind(null, s.id)}
+                label={`Borrar la encuesta «${s.title}»`}
+                message={`¿Borrar la encuesta «${s.title}» y sus ${s.n} respuestas? No se puede deshacer.`}
+              >
+                <Icon name="trash" size={18} />
+              </ConfirmButton>
             </li>
           ))}
         </ul>

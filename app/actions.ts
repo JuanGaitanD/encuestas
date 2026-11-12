@@ -115,6 +115,16 @@ export async function deleteSurvey(id: string) {
   redirect("/panel");
 }
 
+export async function deleteResponse(surveyId: string, responseId: string) {
+  const user = await requireUser();
+  // Solo borra si la respuesta es de una encuesta de quien lo pide.
+  await q(
+    "DELETE FROM responses r USING surveys s WHERE r.id = $1 AND r.survey_id = s.id AND s.id = $2 AND s.user_id = $3",
+    [responseId, surveyId, user.id],
+  );
+  revalidatePath(`/panel/${surveyId}/respuestas`);
+}
+
 // ponytail: sin límite por IP ni captcha; el campo trampa frena los bots
 // simples. Añadir Turnstile o similar si una encuesta recibe abuso.
 export async function submitResponse(slug: string, raw: unknown, trap: string, order?: unknown): Promise<Result> {

@@ -96,3 +96,11 @@ test("rechaza códigos reservados y más de un «Otro»", () => {
   assert.equal(validateAnswers(d, { m: ["Otro: x", "Otro: y"] }).ok, false);
   assert.ok(validateAnswers(d, Object.create({ m: ["zzz"] })).ok); // lo heredado no cuenta como respuesta
 });
+
+test("la lista desplegable solo admite sus opciones, sin «Otro»", () => {
+  const d = parseDefinition({ pages: [{ questions: [{ id: "s", type: "select", label: "s", options: ["1", "2"], other: true, required: true }] }] });
+  assert.equal(d.pages[0].questions[0].other, undefined);
+  assert.ok(validateAnswers(d, { s: "2" }).ok);
+  assert.equal(validateAnswers(d, { s: "Otro: 3" }).ok, false);
+  assert.equal(validateAnswers(d, {}).ok, false);
+});

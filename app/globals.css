@@ -210,6 +210,8 @@ details.panel[open] { padding-bottom: 18px; }
 .matrix-summary { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 .matrix-summary th, .matrix-summary td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); }
 .matrix-summary td:not(:first-child), .matrix-summary th:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.records { list-style: none; padding: 0; margin: 0; }
+.records li { display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--line); min-height: 52px; font-variant-numeric: tabular-nums; }
 .texts { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; font-size: 0.95rem; }
 .card:has(.matrix-summary) { overflow-x: auto; }
 
@@ -242,6 +244,7 @@ details.panel[open] { padding-bottom: 18px; }
 .done-mark path { fill: none; stroke: var(--accent); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 0.45s 0.25s ease-out forwards; }
 .longfield, .numberfield { display: flex; flex-direction: column; gap: 6px; }
 .counter { align-self: flex-end; font-variant-numeric: tabular-nums; }
+select.pick { max-width: 320px; cursor: pointer; }
 .numberfield input { max-width: 180px; font-variant-numeric: tabular-nums; }
 
 /* marcas de selección dibujadas: el control nativo sigue ahí, invisible, para teclado y lectores */

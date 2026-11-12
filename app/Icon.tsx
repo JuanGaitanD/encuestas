@@ -20,6 +20,7 @@ const PATHS = {
   number: "M9 4L7 20M17 4l-2 16M4 9h16M3.5 15h16",
   single: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z",
   multi: "M4 4h16v16H4zM8 12.5l3 3 5-6",
+  select: "M4 6h16v12H4zM9 11l3 3 3-3",
   scale: "M3 12h18M6 9v6M12 8v8M18 9v6",
   matrix: "M4 4h16v16H4zM4 10h16M4 15h16M10 4v16M15 4v16",
   info: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 11v6M12 7.5v.5",
