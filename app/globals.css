@@ -180,7 +180,9 @@ button.link:hover { background: #f8cfdf; }
 @media (min-width: 820px) {
   .acceso { grid-template-columns: minmax(0, 11fr) minmax(0, 9fr); }
   .acceso form { padding: 44px; justify-content: center; }
-  .acceso-lado { display: flex; padding: 44px; justify-content: center; }
+  /* el celular se asoma por abajo: la ficha no crece más que el formulario */
+  .acceso-lado { display: flex; padding: 44px 44px 0; justify-content: flex-end; }
+  .acceso-lado .marco { margin-bottom: -150px; }
 }
 
 /* panel: la lista de encuestas */
@@ -378,12 +380,12 @@ input:checked + .mark.checkbox { background-image: url("data:image/svg+xml,%3Csv
 .ventana { border-radius: 12px; padding: 0 6px 6px; }
 .ventana::before { content: ""; display: block; width: 48px; height: 26px; margin-left: 8px; background: radial-gradient(circle, #6b5f68 3.5px, transparent 4px) 0 50% / 16px 100% repeat-x; }
 .ventana img { border-radius: 6px; }
-/* celular: canto redondeado, botones laterales, isla y pantalla; todo en proporción a su ancho */
-.celular { position: relative; aspect-ratio: 9 / 18.6; padding: 2.8%; border-radius: 15.5% / 7.5%; color: var(--tinta); background: currentColor; box-shadow: inset 0 0 0 1.5px #6b5f68, 0 30px 50px -30px rgb(32 26 31 / 0.45); }
-.celular::before, .celular::after { content: ""; position: absolute; top: 0; bottom: 0; width: 1.4%; background-repeat: no-repeat; }
-.celular::before { left: -1.2%; background-image: linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor); background-size: 100% 4.5%, 100% 8.5%, 100% 8.5%; background-position: 0 17%, 0 27%, 0 39%; }
-.celular::after { right: -1.2%; background-image: linear-gradient(currentColor, currentColor); background-size: 100% 13%; background-position: 0 31%; }
-.pantalla { position: relative; height: 100%; display: flex; flex-direction: column; padding-top: 11%; border-radius: 13.6% / 6.4%; overflow: hidden; background: var(--papel); color: var(--tinta); }
+/* celular: canto redondeado, botones laterales, isla y pantalla; la forma va en proporción a su ancho y el marco es fijo y delgado (--canto) */
+.celular { --canto: 5px; position: relative; aspect-ratio: 9 / 18.6; padding: var(--canto); border-radius: 15.5% / 7.5%; color: var(--tinta); background: currentColor; box-shadow: inset 0 0 0 1.5px #6b5f68, 0 30px 50px -30px rgb(32 26 31 / 0.45); }
+.celular::before, .celular::after { content: ""; position: absolute; top: 0; bottom: 0; width: 2px; background-repeat: no-repeat; }
+.celular::before { left: -2px; background-image: linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor), linear-gradient(currentColor, currentColor); background-size: 100% 4.5%, 100% 8.5%, 100% 8.5%; background-position: 0 17%, 0 27%, 0 39%; }
+.celular::after { right: -2px; background-image: linear-gradient(currentColor, currentColor); background-size: 100% 13%; background-position: 0 31%; }
+.pantalla { position: relative; height: 100%; display: flex; flex-direction: column; padding-top: 11%; border-radius: calc(15.5% - var(--canto)) / calc(7.5% - var(--canto)); overflow: hidden; background: var(--papel); color: var(--tinta); }
 .pantalla::before { content: ""; position: absolute; top: 1.7%; left: 50%; width: 29%; aspect-ratio: 3.3; translate: -50%; border-radius: 99px; background: #201a1f; z-index: 1; }
 .pantalla img { flex: 1; min-height: 0; object-fit: cover; object-position: top; }
 .escena .ventana { transform: translate3d(calc(var(--px, 0px) * -0.4), calc(var(--py, 0px) * -0.4), 0); }
