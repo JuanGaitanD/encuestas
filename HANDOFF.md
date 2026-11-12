@@ -12,6 +12,8 @@ Orden aleatorio de páginas configurable por página (`shuffle`). El orden se so
 
 Revisión de seguridad y pulido visual. Corregido: expresión regular del correo con coste cuadrático, topes de encuestas, respuestas y tamaño, tiempo de respuesta del ingreso, dirección fija al publicar, códigos reservados, cabeceras de seguridad, avance en `sessionStorage`. Interfaz sin subrayados, icono propio y microanimaciones que respetan `prefers-reduced-motion`.
 
+Rediseño de los controles y del editor. `app/Fields.tsx` dibuja cada tipo de pregunta y lo comparten el formulario público y la vista previa del editor; `app/Icon.tsx` es la única familia de iconos. Opciones como filas completas, escala en botones numerados, matriz en tabla (ancho) o en fichas por frase (móvil), barra de avance fija. En el editor: selector de tipo con descripción, preguntas plegables, listas de opciones y filas campo a campo, escalas habituales para las matrices, códigos del CSV en «Opciones avanzadas» y aviso al salir con cambios sin guardar. El formato de `Definition` no cambió.
+
 ## Lo que sigue
 
 - Recuperación de contraseña y verificación de correo (requiere un servicio de envío).
