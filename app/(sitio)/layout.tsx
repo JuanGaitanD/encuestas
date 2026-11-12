@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { currentUser } from "@/lib/auth";
 import { logout } from "@/app/actions";
+import { Icon } from "@/app/Icon";
 
 export default async function SiteLayout({ children }: LayoutProps<"/">) {
   const user = await currentUser();
@@ -11,11 +12,10 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       </a>
       <header className="top">
         <Link href="/" className="brand">
-          <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
-            <rect width="32" height="32" rx="8" fill="#1f5c46" />
-            <rect x="7" y="8" width="18" height="3.6" rx="1.8" fill="#f6f3ec" />
-            <rect x="7" y="14.2" width="12" height="3.6" rx="1.8" fill="#f6f3ec" opacity="0.75" />
-            <path d="M8 23.2l3 3 6-6.4" fill="none" stroke="#f2b84b" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+          <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
+            <ellipse cx="6" cy="16" rx="3.6" ry="7" fill="none" stroke="#c2185b" strokeWidth="2.4" />
+            <ellipse cx="16" cy="16" rx="4.8" ry="8.2" fill="#1b1a21" />
+            <ellipse cx="26" cy="16" rx="3.6" ry="7" fill="none" stroke="#c2185b" strokeWidth="2.4" />
           </svg>
           Encuestas
         </Link>
@@ -40,7 +40,9 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       <main id="contenido">{children}</main>
       <footer className="foot">
         <span>Software libre con licencia MIT.</span>
-        <a href="https://github.com/JuanGaitanD/encuestas">Código en GitHub</a>
+        <a href="https://github.com/JuanGaitanD/encuestas">
+          Código en GitHub <Icon name="external" size={16} />
+        </a>
         <Link href="/privacidad">Privacidad</Link>
       </footer>
     </>

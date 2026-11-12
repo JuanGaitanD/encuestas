@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Fraunces, Instrument_Sans } from "next/font/google";
+import { Archivo, Atkinson_Hyperlegible_Next } from "next/font/google";
 import "./globals.css";
 
-const display = Fraunces({ variable: "--font-display", subsets: ["latin"] });
-const body = Instrument_Sans({ variable: "--font-body", subsets: ["latin"] });
+// Archivo trae eje de ancho: los títulos van semicondensados, como la cabecera de un formulario.
+const display = Archivo({ variable: "--font-display", subsets: ["latin"], axes: ["wdth"] });
+const body = Atkinson_Hyperlegible_Next({ variable: "--font-body", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: { default: "Encuestas", template: "%s · Encuestas" },

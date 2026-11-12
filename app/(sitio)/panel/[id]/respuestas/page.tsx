@@ -75,15 +75,17 @@ export default async function Page({ params }: PageProps<"/panel/[id]/respuestas
   const when = new Intl.DateTimeFormat("es-CO", { dateStyle: "medium", timeStyle: "short", timeZone: "America/Bogota" });
   const all = rows.map((r) => r.answers);
   return (
-    <div className="stack">
+    <div className="stack resultados">
       <Link href={`/panel/${survey.id}`} className="textlink">
         <Icon name="back" size={18} /> Editar encuesta
       </Link>
-      <div className="row between">
-        <h1>{survey.title}</h1>
-        <a className="btn" href={`/panel/${survey.id}/csv`}>Descargar CSV</a>
+      <div className="resultados-cabeza">
+        <div className="stack">
+          <h1>{survey.title}</h1>
+          <p className="total"><strong>{all.length}</strong> {all.length === 1 ? "respuesta recibida" : "respuestas recibidas"}</p>
+        </div>
+        <a className="btn" href={`/panel/${survey.id}/csv`}><Icon name="download" /> Descargar CSV</a>
       </div>
-      <p className="lead"><strong>{all.length}</strong> {all.length === 1 ? "respuesta recibida" : "respuestas recibidas"}</p>
       {all.length > 0 && hasShuffle(survey.definition) && (
         <section className="card">
           <h2 className="qtitle">Orden en que se mostraron las páginas</h2>
@@ -119,15 +121,18 @@ export default async function Page({ params }: PageProps<"/panel/[id]/respuestas
           </div>
         </details>
       )}
-      {all.length > 0 &&
-        questions(survey.definition)
-          .filter((qu) => qu.type !== "info")
-          .map((qu) => (
-            <section key={qu.id} className="card">
-              <h2 className="qtitle">{qu.label}</h2>
-              <Summary qu={qu} all={all} />
-            </section>
-          ))}
+      {all.length > 0 && (
+        <div className="rejilla">
+          {questions(survey.definition)
+            .filter((qu) => qu.type !== "info")
+            .map((qu) => (
+              <section key={qu.id} className={qu.type === "single" || qu.type === "multi" || qu.type === "select" || qu.type === "scale" ? "card" : "card ancha"}>
+                <h2 className="qtitle">{qu.label}</h2>
+                <Summary qu={qu} all={all} />
+              </section>
+            ))}
+        </div>
+      )}
     </div>
   );
 }
