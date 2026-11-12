@@ -109,17 +109,26 @@ a.skip:hover { background: var(--tinta); color: #fff; }
 
 /* campos */
 label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 0.95rem; min-width: 0; }
+/* Un campo es un pozo: hoja blanca, borde de control (3,5:1) y un filo de sombra arriba, lo contrario del canto del botón.
+   Seis estados: reposo, cursor (borde de tinta), foco (anillo de tinta separado 2 px, además del borde magenta),
+   error (borde y filo rojos), deshabilitado (papel, sin filo) y solo lectura (papel, borde punteado, sigue enfocable). */
 input, textarea, select {
-  font: inherit; font-size: 1rem; font-weight: 400; color: inherit; background: var(--hoja); border: 1.5px solid var(--borde); border-radius: var(--r-control);
-  padding: 10px 12px; min-height: 46px; width: 100%; transition: border-color var(--ease), box-shadow var(--ease);
+  font: inherit; font-size: 1rem; font-weight: 400; color: var(--tinta); background-color: var(--hoja); border: 1.5px solid var(--borde); border-radius: var(--r-control);
+  padding: 10px 12px; min-height: 48px; width: 100%; box-shadow: inset 0 2px 0 rgb(32 26 31 / 0.07);
+  transition: border-color var(--ease), box-shadow var(--ease), background-color var(--ease);
 }
 input:hover, textarea:hover, select:hover { border-color: var(--tinta); }
-input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--marca); outline-offset: 1px; border-color: var(--marca); }
-input:disabled { background: var(--papel); color: var(--tinta-2); border-color: var(--linea); }
-input[aria-invalid], textarea[aria-invalid], select[aria-invalid] { border-color: var(--peligro); }
+input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--tinta); outline-offset: 2px; border-color: var(--marca); box-shadow: inset 0 2px 0 rgb(194 24 91 / 0.14); }
+input[aria-invalid], textarea[aria-invalid], select[aria-invalid] { border-color: var(--peligro); box-shadow: inset 0 0 0 1px var(--peligro), inset 0 3px 0 rgb(179 38 30 / 0.12); }
+input[readonly], textarea[readonly] { background-color: var(--papel); border-style: dashed; box-shadow: none; cursor: default; }
+input[readonly]:hover, textarea[readonly]:hover { border-color: var(--borde); }
+input:disabled, textarea:disabled, select:disabled { background-color: var(--papel); color: var(--tinta-2); border-color: var(--linea); box-shadow: none; cursor: not-allowed; }
+/* el autocompletado del navegador no cambia el color del campo */
+input:-webkit-autofill { -webkit-text-fill-color: var(--tinta); -webkit-box-shadow: inset 0 0 0 100px var(--hoja), inset 0 2px 0 rgb(32 26 31 / 0.07); caret-color: var(--marca); }
 textarea { resize: vertical; line-height: 1.5; }
 textarea.mono, input.mono { font-size: 0.9rem; }
-::placeholder { color: #746a72; }
+::placeholder { color: #746a72; opacity: 1; }
+input:disabled::placeholder, textarea:disabled::placeholder { color: #8d8490; }
 
 /* controles nativos con la tinta del sistema: solo CSS, el marcado y el comportamiento no cambian */
 input, textarea { caret-color: var(--marca); }
@@ -128,12 +137,14 @@ select {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%23c2185b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 7.5 5 5 5-5'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center;
 }
-select:has(option[value=""]:checked) { color: var(--tinta-2); font-weight: 400; }
+select:has(option[value=""]:checked) { color: #746a72; font-weight: 400; }
+select:disabled { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%238d8490' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 7.5 5 5 5-5'/%3E%3C/svg%3E"); }
 input[type="number"] {
   -moz-appearance: textfield; appearance: textfield; padding-left: 40px; font-family: var(--font-display), sans-serif; font-stretch: 88%; font-weight: 700; font-size: 1.25rem; font-variant-numeric: tabular-nums;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%238d8490' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M7 3 5.5 15M12.5 3 11 15M3 6.5h12.5M2.5 11.5H15'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: left 12px center;
 }
+input[type="number"]::placeholder { font-family: var(--font-body), sans-serif; font-stretch: normal; font-weight: 400; font-size: 1rem; }
 input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { appearance: none; margin: 0; }
 .longfield textarea { field-sizing: content; min-height: 7.5em; max-height: 60vh; }
 /* con puntero fino, la lista desplegable es del sistema visual: burbuja por opción; en táctil queda el selector nativo */
@@ -211,7 +222,8 @@ button.link:hover { background: #f8cfdf; }
 /* interruptor */
 .switch { flex-direction: row; align-items: center; gap: 12px; font-weight: 400; min-height: 44px; cursor: pointer; position: relative; }
 .switch input, .option > input[type="checkbox"], .option > input[type="radio"], .segment input, .cell input { position: absolute; opacity: 0; width: 1px; height: 1px; min-height: 0; padding: 0; margin: 0; }
-.track { flex: none; width: 44px; height: 26px; border-radius: 99px; background: var(--borde); position: relative; transition: background-color var(--ease); }
+.track { flex: none; width: 44px; height: 26px; border-radius: 99px; background: var(--borde); box-shadow: inset 0 2px 0 rgb(32 26 31 / 0.14); position: relative; transition: background-color var(--ease); }
+.switch input:disabled + .track { background: var(--linea); box-shadow: none; }
 .track::after { content: ""; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform var(--ease); }
 .switch input:checked + .track { background: var(--marca); }
 .switch input:checked + .track::after { transform: translateX(18px); }
@@ -317,7 +329,7 @@ details.panel[open] { padding-bottom: 20px; }
   background: var(--hoja); border-top: 1px solid var(--linea); z-index: 5;
 }
 .inviterow { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
-.inviterow .btn { min-height: 44px; }
+.inviterow .btn { min-height: 48px; }
 .error:empty { display: none; }
 .codeblock { display: block; font-family: var(--mono); font-size: 0.875rem; background: var(--papel); border: 1px solid var(--linea); border-radius: var(--r-control); padding: 12px 14px; overflow-wrap: anywhere; user-select: all; }
 .sharelink { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
@@ -389,10 +401,12 @@ select.pick { max-width: 320px; cursor: pointer; }
 
 /* La marca de selección es la burbuja de la hoja de respuestas: vacía con contorno, rellena al elegir.
    El control nativo sigue ahí, invisible, para teclado y lectores de pantalla. */
-.mark { flex: none; width: 22px; height: 22px; border: 1.5px solid var(--borde); background: var(--hoja); transition: background-color var(--ease), border-color var(--ease); }
+.mark { flex: none; width: 22px; height: 22px; border: 1.5px solid var(--borde); background: var(--hoja); box-shadow: inset 0 2px 0 rgb(32 26 31 / 0.07); transition: background-color var(--ease), border-color var(--ease); }
 .mark.radio { border-radius: 50%; }
 .mark.checkbox { border-radius: 6px; background-position: center; background-repeat: no-repeat; }
-input:checked + .mark { border-color: var(--marca); background-color: var(--marca); animation: pop 0.22s ease-out; }
+input:checked + .mark { border-color: var(--marca); background-color: var(--marca); box-shadow: none; animation: pop 0.22s ease-out; }
+input:disabled + .mark { background-color: var(--linea); border-color: var(--linea); box-shadow: none; }
+input:disabled:checked + .mark { background-color: var(--borde); border-color: var(--borde); }
 input:checked + .mark.checkbox { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E"); background-size: 16px; }
 
 /* una opción = una fila entera que se puede tocar */
@@ -414,6 +428,7 @@ input:checked + .mark.checkbox { background-image: url("data:image/svg+xml,%3Csv
 .segment:hover span { border-color: var(--tinta); }
 .segment:active span { transform: translateY(1px); }
 .segment input:checked + span { background: var(--marca); border-color: var(--marca); color: #fff; }
+.segment input:disabled + span { background: var(--papel); border-color: var(--linea); color: var(--tinta-2); cursor: not-allowed; }
 .ends { display: flex; justify-content: space-between; gap: 16px; color: var(--tinta-2); font-size: 0.85rem; }
 .ends span:last-child { text-align: right; }
 
@@ -721,11 +736,21 @@ details[open] > .stack { animation: rise 0.22s ease-out both; }
 }
 
 /* —— Compatibilidad —— */
+/* Con cursor de verdad, las marcas y los interruptores también responden al pasar por encima. */
+@media (hover: hover) {
+  .option:hover .mark { border-color: var(--tinta); }
+  .option:hover input:checked + .mark { border-color: var(--marca-fuerte); background-color: var(--marca-fuerte); }
+  .option:hover input:disabled + .mark { border-color: var(--linea); }
+  .switch:hover .track { background: var(--tinta-2); }
+  .switch:hover input:checked + .track { background: var(--marca-fuerte); }
+  .segment:hover input:checked + span { background: var(--marca-fuerte); border-color: var(--marca-fuerte); }
+}
 /* Táctil: un relleno «al pasar el cursor» no debe quedarse pegado después de un toque. */
 @media (hover: none) {
   .btn:hover { background-color: var(--cara); }
   .btn.text:hover, .btn.dashed:hover { background: transparent; color: var(--marca); }
   .option:hover, .segment:hover span { border-color: var(--borde); }
+  input:hover:not(:focus-visible):not([aria-invalid]), textarea:hover:not(:focus-visible):not([aria-invalid]), select:hover:not(:focus-visible):not([aria-invalid]) { border-color: var(--borde); }
 }
 /* Navegadores sin :has() (Firefox anterior a 121, Safari anterior a 15.4): los mismos anchos y estados, por otra vía. */
 @supports not selector(:has(*)) {
