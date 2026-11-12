@@ -28,6 +28,11 @@ El sistema visual («Hoja de respuestas»: roles de color, tipografía, espacio,
 - Las capturas de la portada (`app/capturas/`) son de la app real con una encuesta de ejemplo. Si cambia la interfaz que muestran, se vuelven a tomar; no se dibujan ni se retocan.
 - Para probar en local no debe existir `.env.local` con `DATABASE_URL`: apuntaría a la base de producción.
 
+## Despliegue
+
+- Vercel (cuenta personal `juangaitand`) despliega producción desde `main`. Las demás ramas no despliegan: `vercel.json` desactiva las vistas previas porque usarían la base de producción.
+- Una rama se prueba en local con la base embebida, no en una vista previa.
+
 ## Qué no tocar
 
 - No guardar IP, agente de usuario ni identificadores de quien responde. Es una promesa de la página de privacidad.
