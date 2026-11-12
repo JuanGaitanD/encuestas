@@ -8,7 +8,7 @@ Todo vive en `app/globals.css`; no hay librería de componentes. Las reglas de a
 
 - **Ningún texto subrayado**, en reposo, hover ni foco. Un destino suelto responde con fondo tenue; un enlace dentro de un párrafo lleva además un resaltado en reposo (`--marca-suave`), para no depender solo del color.
 - **Elevación declarada una vez:** las fichas llevan un borde de 1 px y ninguna sombra. La única sombra es la de los marcos de dispositivo de la portada, que no llevan borde.
-- **Ningún bloque con más del 60 % de su caja vacío.** Se corrige escalando lo real o recomponiendo, no rellenando.
+- **Ningún bloque con más del 60 % de su caja vacío.** Se corrige escalando lo real o recomponiendo, no rellenando. Al medir, el celular dibujado cuenta como figura.
 - **Sin kicker** sobre los títulos, sin tarjetas iguales de icono + título + texto, sin ficha dentro de ficha.
 - **Nada inventado:** la portada solo afirma lo que el código y el `README` respaldan, y sus capturas son de la app real con una encuesta de ejemplo (lo dice la línea de procedencia).
 - **Un solo acento.** El verde (`--exito`) y el rojo (`--peligro`) son estados, no decoración.
@@ -49,17 +49,18 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 
 ## Componentes
 
-- **Botones** (`.btn`): relleno magenta el principal (50 px de alto; `.grande` 56 px en la portada), `.ghost` con contorno el secundario, `.text` el terciario, `.danger` el destructivo, `.dashed` para «añadir». Borde de 1,5 px, radio de 12 px, pulsado con `translateY(1px)`. `.avanza` desplaza la flecha 4 px en hover y foco.
+- **Botones** (`.btn`): relleno magenta el principal (50 px de alto; `.grande` 56 px en la portada), `.ghost` con contorno el secundario, `.text` el terciario, `.danger` el destructivo, `.dashed` para «añadir». Borde de 1,5 px, radio de 12 px, pulsado con `translateY(1px)`. `.avanza` desplaza la flecha 4 px en hover y foco. En la portada los botones son píldoras sin degradado: el principal lleva la flecha dentro de una burbuja blanca y el secundario es un contorno de tinta que se rellena al pasar el cursor.
 - **Campos:** borde de 1,5 px en `--borde`, 46 px de alto, 16 px de texto. Foco con contorno magenta de 2 px. Error con `aria-invalid` y texto en `--peligro`.
 - **Marca de selección** (`.mark`): burbuja de 22 px, rellena de magenta al elegir; la opción entera es una fila tocable de 52 px que se tiñe al elegirse. El control nativo sigue ahí, invisible, para teclado y lectores.
 - **Foco:** contorno de 2 px en `--tinta` con 2 px de separación; blanco sobre los bloques oscuro y magenta. Todo objetivo interactivo mide 44 px o más.
 - **Fichas** (`.card`, `.panel`): hoja blanca, borde de 1 px, sin sombra.
 - **Etiqueta de estado** (`.tag`): píldora con una burbuja; rellena y verde si está publicada.
+- **Celular** (`app/(sitio)/Celular.tsx`, `.marco.celular`): un solo marco de teléfono dibujado con CSS (bisel de tinta, isla, botones laterales, esquinas en proporción) para todos los sitios donde aparece: héroe, «Publica», cierre y acceso. Dentro va una captura real o un control real, nunca un dibujo de la interfaz.
 - **Iconos:** una sola familia en `app/Icon.tsx`, trazo de 2 px, siempre al lado de su texto, nunca dentro de un recuadro.
 
 ## Pantallas
 
-- **Portada (persuadir):** héroe a dos columnas con las capturas reales en marcos dibujados con CSS (`.marco.ventana` y `.marco.celular`), siempre rectos y sin perspectiva para que el texto de la captura se lea nítido. Cada captura muestra una pantalla completa, no un recorte a media página, y se sirve sin recomprimir (`unoptimized`), tira de burbujas que cuelga del borde del héroe, cuerpo en bloques de papeles distintos sobre una rejilla de 12 (Escribe, Publica, franja oscura de la promesa, Analiza con el CSV, lista para investigación, enunciado grande en magenta) y un cierre con un solo objetivo. Las capturas están en `app/capturas/` y se regeneran con la app corriendo.
+- **Portada (persuadir):** héroe a dos columnas con las capturas reales en marcos dibujados con CSS (`.marco.ventana` y `.marco.celular`), siempre rectos y sin perspectiva para que el texto de la captura se lea nítido. Cada captura muestra una pantalla completa, no un recorte a media página, y se sirve sin recomprimir (`unoptimized`), tira de burbujas que cuelga del borde del héroe, cuerpo en bloques de papeles distintos sobre una rejilla de 12 (Escribe a lo ancho, Publica junto al bloque oscuro de la promesa, Analiza con el CSV, lista para investigación, enunciado grande en magenta) y un cierre con un solo objetivo. «Escribe» y «Publica» no llevan capturas sino demostraciones que se pueden usar (`app/(sitio)/Demos.tsx`): los nueve tipos de pregunta y la casilla de consentimiento dentro del celular, hechas con el mismo `Field` del formulario público y sin guardar ni enviar nada. Las capturas están en `app/capturas/` y se regeneran con la app corriendo.
 - **Panel, editor y resultados (operar):** la marca vive en los detalles. Desde 1024 px, la lista de encuestas es una tabla de una línea por encuesta, los datos generales van a dos columnas y la pregunta abierta muestra su vista previa fija a la derecha. Los resultados van en dos columnas en orden de lectura; matrices, textos y cifras cruzan las dos.
 - **Formulario público:** una columna de 680 px, barra de avance fija arriba, sin cabecera del sitio. La pantalla final («Listo») va centrada.
 
@@ -67,9 +68,10 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 
 - Transiciones de 160 ms con `cubic-bezier(0.22, 1, 0.36, 1)` en color, borde y `transform`; entradas de 220 a 300 ms en lo que se despliega. Nada retrasa una acción.
 - La portada entra una sola vez (el texto sube escalonado, la escena aparece) y su escena sigue al cursor con suavizado (`app/(sitio)/Escena.tsx`; el celular y la ventana se desplazan unos píxeles en sentidos opuestos, sin giros): solo con puntero fino, desde 1024 px, y se detiene al llegar a su destino. Las burbujas de la tira se rellenan al pasar el cursor.
+- Microanimaciones, todas cortas y de una sola propiedad: los bloques de la portada asoman al entrar en pantalla (`animation-timeline: view()`, solo donde el navegador lo soporta), la tira se rellena en ola una vez, la vista de la demostración sube al cambiar de tipo, el botón «Empezar» late una vez al habilitarse, la burbuja de «Publicada» aparece con un rebote corto y los iconos de los botones responden al cursor.
 - Con `prefers-reduced-motion: reduce` no hay animaciones ni transiciones y la escena queda quieta.
 
 ## Excepciones registradas
 
-- El botón principal lleva un degradado vertical casi imperceptible (8 % de blanco a 8 % de negro) para darle cuerpo sin sombra. Es deliberado.
+- El botón principal de la app (no el de la portada) lleva un degradado vertical casi imperceptible (8 % de blanco a 8 % de negro) para darle cuerpo sin sombra. Es deliberado.
 - El cierre de la portada no lleva código QR: quien crea una encuesta ya está frente al computador.
