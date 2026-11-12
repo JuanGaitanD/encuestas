@@ -14,7 +14,7 @@ Nació para aplicar un cuestionario de investigación a estudiantes de Ingenier�
 - Resumen por pregunta y descarga en CSV, con una columna por pregunta y una por cada fila de las matrices. El código de cada pregunta lo decides tú, así que las columnas llevan nombres útiles para el análisis.
 - Orden aleatorio de páginas: marcas las que deben intercambiarse y cada persona las ve en un orden sorteado. El orden que le tocó a cada quien queda en la columna `orden_paginas` del CSV, para contrabalancear condiciones en un estudio y comprobar después si el orden influyó.
 - Importar y exportar la encuesta completa como JSON.
-- Compartir cada encuesta con su enlace o con un código QR que se descarga en PNG para proyectar o imprimir.
+- Compartir cada encuesta con su enlace o con un código QR que se copia o se descarga en PNG para proyectar o imprimir.
 - Varias personas en una encuesta: quien la crea añade a otras cuentas por su correo. Si dos guardan a la vez, la segunda recibe un aviso y decide si carga la versión de la otra o guarda la suya encima; nada se pisa en silencio.
 - Servidor MCP para que un asistente (Claude u otro) cree, edite, publique y lea encuestas. Ver «Conectar un asistente».
 
