@@ -59,12 +59,12 @@ export function Field(props: Props) {
   const aria = { "aria-label": qu.label, "aria-describedby": describedBy, "aria-invalid": invalid || undefined };
   switch (qu.type) {
     case "short":
-      return <input maxLength={500} value={(value as string) ?? ""} onChange={(e) => set(e.target.value || undefined)} {...aria} />;
+      return <input maxLength={500} placeholder="Escribe tu respuesta" value={(value as string) ?? ""} onChange={(e) => set(e.target.value || undefined)} {...aria} />;
     case "long": {
       const text = (value as string) ?? "";
       return (
         <div className="longfield">
-          <textarea rows={4} maxLength={5000} value={text} onChange={(e) => set(e.target.value || undefined)} {...aria} />
+          <textarea rows={4} maxLength={5000} placeholder="Escribe tu respuesta" value={text} onChange={(e) => set(e.target.value || undefined)} {...aria} />
           {text.length > 4000 && <small className="counter">{text.length} de 5000</small>}
         </div>
       );
@@ -77,6 +77,7 @@ export function Field(props: Props) {
           <input
             type="number"
             inputMode="numeric"
+            placeholder="Un número"
             min={qu.min}
             max={qu.max}
             value={(value as number) ?? ""}

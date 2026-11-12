@@ -13,12 +13,12 @@ export function PasswordForm({ hasPassword }: { hasPassword: boolean }) {
       {has && (
         <label>
           Contraseña actual
-          <input name="current" type="password" required autoComplete="current-password" />
+          <input name="current" type="password" required autoComplete="current-password" placeholder="La que usas hoy" />
         </label>
       )}
       <label>
         {has ? "Contraseña nueva" : "Contraseña"}
-        <input name="password" type="password" required minLength={8} autoComplete="new-password" />
+        <input name="password" type="password" required minLength={8} autoComplete="new-password" placeholder="Mínimo 8 caracteres" />
         <small>Mínimo 8 caracteres.</small>
       </label>
       {state.error && (

@@ -290,7 +290,7 @@ function QuestionCard(p: {
             <div className="stack">
               <label className="narrow">
                 Código de la pregunta
-                <input className="mono" value={qu.id} maxLength={40} onChange={(e) => set({ id: e.target.value.toLowerCase() })} />
+                <input className="mono" value={qu.id} maxLength={40} placeholder="codigo_columna" onChange={(e) => set({ id: e.target.value.toLowerCase() })} />
                 <small>Es el nombre de la columna en el CSV. Minúsculas, números y guion bajo; debe empezar por letra.</small>
               </label>
               {qu.type === "matrix" && rows.length > 0 && (
@@ -300,7 +300,7 @@ function QuestionCard(p: {
                   {rows.map((r, i) => (
                     <label key={i} className="coderow">
                       <span>{r.label || `Fila ${i + 1}`}</span>
-                      <input className="mono" value={r.id} maxLength={40} aria-label={`Código de la fila ${i + 1}`} onChange={(e) => set({ rows: withAt(rows, i, { ...r, id: e.target.value.toLowerCase() }) })} />
+                      <input className="mono" value={r.id} maxLength={40} placeholder="codigo_fila" aria-label={`Código de la fila ${i + 1}`} onChange={(e) => set({ rows: withAt(rows, i, { ...r, id: e.target.value.toLowerCase() }) })} />
                     </label>
                   ))}
                 </fieldset>
@@ -455,13 +455,13 @@ export function Editor({ survey, editors: initialEditors }: { survey: Survey; ed
         <h2>Datos generales</h2>
         <label>
           Título
-          <input value={title} maxLength={200} onChange={(e) => (setTitle(e.target.value), touch())} />
+          <input value={title} maxLength={200} placeholder="Título de la encuesta" onChange={(e) => (setTitle(e.target.value), touch())} />
         </label>
         <label>
           Dirección del enlace
           <span className="affix">
             <span className="prefix">/e/</span>
-            <input value={slug} maxLength={60} disabled={published} onChange={(e) => (setSlug(e.target.value.toLowerCase()), touch())} />
+            <input value={slug} maxLength={60} disabled={published} placeholder="mi-encuesta" onChange={(e) => (setSlug(e.target.value.toLowerCase()), touch())} />
           </span>
           <small>
             {published
@@ -471,7 +471,7 @@ export function Editor({ survey, editors: initialEditors }: { survey: Survey; ed
         </label>
         <label>
           Presentación
-          <textarea rows={5} value={def.intro} onChange={(e) => change({ ...def, intro: e.target.value })} />
+          <textarea rows={5} value={def.intro} placeholder="De qué trata, quién la hace, cuánto tarda y qué pasa con los datos" onChange={(e) => change({ ...def, intro: e.target.value })} />
           <small>Lo primero que ve la persona: de qué trata, quién la hace, cuánto tarda y qué pasa con sus datos.</small>
         </label>
         <label>
@@ -481,7 +481,7 @@ export function Editor({ survey, editors: initialEditors }: { survey: Survey; ed
         </label>
         <label>
           Mensaje al terminar
-          <input value={def.thanks ?? ""} onChange={(e) => change({ ...def, thanks: e.target.value })} />
+          <input value={def.thanks ?? ""} placeholder="Gracias por responder." onChange={(e) => change({ ...def, thanks: e.target.value })} />
         </label>
       </section>
 
@@ -518,11 +518,11 @@ export function Editor({ survey, editors: initialEditors }: { survey: Survey; ed
           <div className="fieldrow">
             <label>
               Título de la página
-              <input value={page.title} onChange={(e) => setPage(pi, { title: e.target.value })} />
+              <input value={page.title} placeholder="Título de la página" onChange={(e) => setPage(pi, { title: e.target.value })} />
             </label>
             <label>
               <span>Descripción <span className="optional">(opcional)</span></span>
-              <textarea rows={1} value={page.description ?? ""} onChange={(e) => setPage(pi, { description: e.target.value })} />
+              <textarea rows={1} value={page.description ?? ""} placeholder="Una línea que oriente a quien responde" onChange={(e) => setPage(pi, { description: e.target.value })} />
             </label>
           </div>
           {def.pages.length > 1 && (
@@ -641,7 +641,7 @@ export function Editor({ survey, editors: initialEditors }: { survey: Survey; ed
             >
               <label className="grow">
                 Correo de su cuenta
-                <input type="email" required value={invite} autoComplete="off" aria-invalid={inviteError ? true : undefined} aria-describedby="invite-error" onChange={(e) => setInvite(e.target.value)} />
+                <input type="email" required value={invite} autoComplete="off" placeholder="correo@ejemplo.com" aria-invalid={inviteError ? true : undefined} aria-describedby="invite-error" onChange={(e) => setInvite(e.target.value)} />
               </label>
               <button className="btn ghost" disabled={pending}>
                 <Icon name="plus" size={18} /> Añadir

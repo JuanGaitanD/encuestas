@@ -29,12 +29,12 @@ export function AuthForm({ mode, google = false, notice }: { mode: "login" | "re
       {isRegister && (
         <label>
           Nombre
-          <input name="name" required maxLength={80} autoComplete="name" defaultValue={state.name} />
+          <input name="name" required maxLength={80} autoComplete="name" placeholder="Tu nombre" defaultValue={state.name} />
         </label>
       )}
       <label>
         Correo
-        <input name="email" type="email" required autoComplete="email" defaultValue={state.email} />
+        <input name="email" type="email" required autoComplete="email" placeholder="tu@correo.com" defaultValue={state.email} />
       </label>
       <label>
         Contraseña
@@ -42,6 +42,7 @@ export function AuthForm({ mode, google = false, notice }: { mode: "login" | "re
           name="password"
           type="password"
           required
+          placeholder={isRegister ? "Mínimo 8 caracteres" : "Tu contraseña"}
           minLength={isRegister ? 8 : undefined}
           autoComplete={isRegister ? "new-password" : "current-password"}
         />
