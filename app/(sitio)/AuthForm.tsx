@@ -6,14 +6,26 @@ import { useActionState } from "react";
 import { login, register, type FormState } from "@/app/actions";
 import matriz from "@/app/capturas/movil-pagina2.png";
 import { Celular } from "./Celular";
+import { GOOGLE_MESSAGES, GoogleButton } from "./Google";
 
-export function AuthForm({ mode }: { mode: "login" | "register" }) {
+export function AuthForm({ mode, google = false, notice }: { mode: "login" | "register"; google?: boolean; notice?: string }) {
   const isRegister = mode === "register";
   const [state, action, pending] = useActionState<FormState, FormData>(isRegister ? register : login, {});
   return (
     <div className="acceso">
     <form action={action} className="stack">
       <h1>{isRegister ? "Crear cuenta" : "Ingresar"}</h1>
+      {notice && GOOGLE_MESSAGES[notice] && (
+        <p className="error" role="alert">
+          {GOOGLE_MESSAGES[notice]}
+        </p>
+      )}
+      {google && (
+        <>
+          <GoogleButton />
+          <p className="separador">o con tu correo</p>
+        </>
+      )}
       {isRegister && (
         <label>
           Nombre

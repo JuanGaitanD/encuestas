@@ -25,6 +25,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
           {user ? (
             <>
               <Link href="/panel">Mis encuestas</Link>
+              <Link href="/panel/cuenta">Cuenta</Link>
               <form action={logout}>
                 <button className="link">Salir</button>
               </form>

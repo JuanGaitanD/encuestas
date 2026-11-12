@@ -25,6 +25,11 @@ export default function Page() {
         Se guardan tu nombre, tu correo y tu contraseña cifrada con scrypt. Se usa una única cookie, necesaria para
         mantener tu sesión. Al borrar una encuesta se borran sus respuestas.
       </p>
+      <p>
+        Si entras con Google, se guardan además el identificador que Google da a tu cuenta y el correo que Google
+        confirmó, para reconocerte la próxima vez. No se guarda tu foto ni se pide acceso a nada más de tu cuenta de
+        Google. Mientras eliges tu cuenta de Google se usa una cookie temporal que dura diez minutos.
+      </p>
       <h2>Código</h2>
       <p>
         El programa es software libre. Puedes revisar qué hace con los datos, o instalar tu propia copia, desde{" "}

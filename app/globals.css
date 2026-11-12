@@ -222,6 +222,12 @@ button.link:hover { background: #f8cfdf; }
 .acceso { display: grid; grid-template-columns: minmax(0, 1fr); background: var(--hoja); border: 1px solid var(--linea); border-radius: var(--r-ficha); overflow: hidden; }
 .acceso form { padding: 32px; gap: 18px; }
 .acceso form .btn { margin-top: 4px; }
+/* ingreso con Google: botón secundario a lo ancho y un separador de texto antes del formulario */
+.btn.google { gap: 10px; }
+.panel form.stack > .btn { align-self: flex-start; }
+.acceso form .btn.google { margin-top: 0; }
+.separador { display: flex; align-items: center; gap: 12px; color: var(--tinta-2); font-size: 0.9rem; }
+.separador::before, .separador::after { content: ""; flex: 1; height: 1px; background: var(--linea); }
 .acceso-lado { display: none; background: var(--tinta); color: #fff; padding: 32px; flex-direction: column; gap: 28px; }
 .acceso-lado .marco { color: #4d424a; width: min(230px, 72%); margin: 0 auto; box-shadow: inset 0 0 0 1.5px #7a6d76; }
 .acceso-lado p { font-family: var(--font-display), sans-serif; font-stretch: 88%; font-weight: 500; font-size: clamp(1.75rem, 3vw, 2.5rem); line-height: 1.02; letter-spacing: -0.03em; word-spacing: 0.08em; }

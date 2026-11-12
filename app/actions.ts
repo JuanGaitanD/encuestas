@@ -49,6 +49,18 @@ export async function login(_: FormState, data: FormData): Promise<FormState> {
   redirect("/panel");
 }
 
+/** Crea o cambia la contraseña. Quien entró con Google no tiene una; quien ya tiene debe escribir la actual. */
+export async function setPassword(_: FormState & { done?: boolean }, data: FormData): Promise<FormState & { done?: boolean }> {
+  const user = await requireUser();
+  const current = String(data.get("current") ?? "");
+  const password = String(data.get("password") ?? "");
+  if (password.length < 8 || password.length > 200) return { error: "La contraseña debe tener al menos 8 caracteres." };
+  const [row] = await q<{ pass: string }>("SELECT pass FROM users WHERE id = $1", [user.id]);
+  if (row?.pass && (current.length > 200 || !(await verifyPassword(current, row.pass)))) return { error: "La contraseña actual no es correcta." };
+  await q("UPDATE users SET pass = $1 WHERE id = $2", [await hashPassword(password), user.id]);
+  return { done: true };
+}
+
 export async function logout() {
   await endSession();
   redirect("/");
