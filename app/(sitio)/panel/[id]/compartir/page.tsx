@@ -2,7 +2,7 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { Icon } from "@/app/Icon";
 import { loadSurvey } from "@/lib/own-survey";
-import { ShareButtons } from "./ShareButtons";
+import { CopyQr, ShareButtons } from "./ShareButtons";
 
 export const metadata = { title: "Compartir encuesta" };
 
@@ -33,6 +33,7 @@ export default async function Page({ params }: PageProps<"/panel/[id]/compartir"
         {/* eslint-disable-next-line @next/next/no-img-element -- imagen generada al vuelo; no pasa por el optimizador */}
         <img className="qr" src={qr} width={260} height={260} alt={`Código QR que lleva a ${url}`} />
         <div className="row">
+          <CopyQr src={qr} />
           <a className="btn ghost" href={qr} download={`${survey.slug}-qr.png`}>
             <Icon name="download" size={18} /> Descargar el QR
           </a>
