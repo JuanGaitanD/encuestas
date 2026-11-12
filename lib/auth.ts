@@ -1,29 +1,15 @@
-import { createHash, randomBytes, randomUUID, scrypt, timingSafeEqual } from "node:crypto";
-import { promisify } from "node:util";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { q } from "./db";
 
-const scryptAsync = promisify(scrypt) as (pass: string, salt: Buffer, len: number) => Promise<Buffer>;
 const COOKIE = "sid";
 const DAYS = 30;
 
 export type User = { id: string; email: string; name: string };
 
-export async function hashPassword(password: string): Promise<string> {
-  const salt = randomBytes(16);
-  const key = await scryptAsync(password, salt, 64);
-  return `${salt.toString("hex")}:${key.toString("hex")}`;
-}
-
-export async function verifyPassword(password: string, stored: string): Promise<boolean> {
-  const [salt, key] = stored.split(":");
-  if (!salt || !key) return false;
-  const expected = Buffer.from(key, "hex");
-  const actual = await scryptAsync(password, Buffer.from(salt, "hex"), expected.length);
-  return timingSafeEqual(actual, expected);
-}
+export { hashPassword, verifyPassword } from "./password.ts";
 
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 

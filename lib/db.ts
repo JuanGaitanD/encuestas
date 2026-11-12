@@ -44,6 +44,12 @@ const SCHEMA = [
      name text NOT NULL,
      token_hash text UNIQUE NOT NULL,
      created_at timestamptz NOT NULL DEFAULT now())`,
+  // Cuenta de Google enlazada a una cuenta. De Google solo se guarda su identificador (`sub`) y el correo que confirmó.
+  `CREATE TABLE IF NOT EXISTS google_accounts (
+     sub text PRIMARY KEY,
+     user_id uuid UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     email text NOT NULL,
+     created_at timestamptz NOT NULL DEFAULT now())`,
 ];
 
 async function connect(): Promise<Run> {
