@@ -18,6 +18,8 @@ Tipo de pregunta «Lista desplegable» (`select`). Borrado de una encuesta desde
 
 Editores compartidos y servidor MCP. `lib/surveys.ts` reúne las operaciones sobre encuestas con su control de acceso (tabla `survey_editors`); las usan las acciones del panel y `app/api/mcp/route.ts`. El guardado lleva la versión abierta (`updated_at`) y rechaza con `conflict` si otra persona guardó después. Claves de acceso en `api_tokens` (solo el hash), gestionadas en `/panel/conexion`.
 
+Compartir por enlace y QR. La página `/panel/[id]/compartir` muestra el enlace público con botón de copiar y el código QR; la imagen la genera `/panel/[id]/qr` con la dependencia `qrcode` (PNG de 1024 px).
+
 ## Lo que sigue
 
 - Recuperación de contraseña y verificación de correo (requiere un servicio de envío).
