@@ -5,7 +5,8 @@ import { createSurvey } from "@/app/actions";
 
 export const metadata = { title: "Mis encuestas" };
 
-export default async function Panel() {
+export default async function Panel({ searchParams }: PageProps<"/panel">) {
+  const limite = (await searchParams).limite;
   const user = await requireUser();
   const surveys = await q<{ id: string; title: string; slug: string; published: boolean; n: number }>(
     `SELECT s.id, s.title, s.slug, s.published,
@@ -21,6 +22,11 @@ export default async function Panel() {
           <button className="btn">Nueva encuesta</button>
         </form>
       </div>
+      {limite && (
+        <p className="error" role="alert">
+          Llegaste al máximo de 20 encuestas por cuenta. Borra alguna para crear otra.
+        </p>
+      )}
       {surveys.length === 0 ? (
         <p className="empty">Todavía no tienes encuestas. Crea la primera con el botón de arriba.</p>
       ) : (

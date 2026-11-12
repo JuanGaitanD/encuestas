@@ -6,12 +6,14 @@ export default function Page() {
       <h1>Privacidad</h1>
       <h2>Si respondes una encuesta</h2>
       <p>
-        No necesitas cuenta. Se guardan tus respuestas y la fecha y hora de envío. No se guarda tu dirección IP, tu
-        correo ni un identificador de tu navegador, y no hay cookies de seguimiento ni analítica de terceros.
+        No necesitas cuenta. Se guardan tus respuestas y la fecha y hora de envío. La aplicación no guarda tu dirección
+        IP, tu correo ni un identificador de tu navegador, y no hay cookies de seguimiento ni analítica de terceros. El
+        servicio de alojamiento recibe tu IP para poder entregarte la página, como cualquier sitio web, y puede
+        conservarla un tiempo en sus registros técnicos; esos registros no se unen a tus respuestas.
       </p>
       <p>
         Mientras respondes, el avance se guarda en tu propio navegador para que no lo pierdas si recargas la página. Se
-        borra al enviar.
+        borra al enviar o al cerrar la pestaña. Después de enviar, el navegador recuerda solo que ya respondiste.
       </p>
       <p>
         Cada encuesta tiene un responsable, que es quien la creó y quien decide qué pregunta y para qué. Si una pregunta

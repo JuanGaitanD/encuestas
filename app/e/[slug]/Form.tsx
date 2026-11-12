@@ -120,11 +120,12 @@ export function Form({ slug, title, def, preview }: Props) {
   const top = useRef<HTMLDivElement>(null);
   const last = def.pages.length;
 
-  // El avance se guarda en el navegador para no perderlo al recargar.
+  // El avance vive en sessionStorage: sobrevive a recargar, pero no queda para la siguiente persona
+  // que use el equipo. En localStorage solo queda la marca de «ya respondí».
   useEffect(() => {
     let saved: Saved | null = null;
     try {
-      saved = JSON.parse(localStorage.getItem(key) ?? "null") as Saved | null;
+      saved = JSON.parse(localStorage.getItem(key) ?? sessionStorage.getItem(key) ?? "null") as Saved | null;
     } catch {}
     // El orden se sortea una vez por persona y se conserva si recarga.
     setOrder(saved && validOrder(def, saved.order) ? saved.order : randomOrder(def));
@@ -139,7 +140,7 @@ export function Form({ slug, title, def, preview }: Props) {
     setLoaded(true);
   }, [key, last, def]);
   useEffect(() => {
-    if (loaded && step < last) localStorage.setItem(key, JSON.stringify({ step, answers, order } satisfies Saved));
+    if (loaded && step < last) sessionStorage.setItem(key, JSON.stringify({ step, answers, order } satisfies Saved));
   }, [loaded, key, step, answers, order, last]);
 
   const go = (to: number) => {
@@ -162,6 +163,7 @@ export function Form({ slug, title, def, preview }: Props) {
     start(async () => {
       const r = await submitResponse(slug, answers, trap.current?.value ?? "", order);
       if (!r.ok) return setFailure(r.error);
+      sessionStorage.removeItem(key);
       localStorage.setItem(key, JSON.stringify({ step: last, answers: {}, done: true } satisfies Saved));
       go(last);
     });
@@ -192,7 +194,7 @@ export function Form({ slug, title, def, preview }: Props) {
       )}
 
       {step >= 0 && step < last && (
-        <section className="stack">
+        <section className="stack" key={step}>
           <div className="progress" role="progressbar" aria-valuemin={0} aria-valuemax={last} aria-valuenow={step + 1} aria-label="Avance">
             <span style={{ width: `${(100 * (step + 1)) / last}%` }} />
           </div>
@@ -254,8 +256,29 @@ export function Form({ slug, title, def, preview }: Props) {
 
       {step === last && (
         <section className="stack done">
+          <svg className="done-mark" viewBox="0 0 56 56" aria-hidden="true">
+            <circle cx="28" cy="28" r="28" />
+            <path d="M17 29l8 8 15-17" />
+          </svg>
           <h1>Listo</h1>
           <p className="pre">{def.thanks || "Gracias por responder."}</p>
+          {!preview && (
+            <p className="muted">
+              ¿Eres otra persona usando este mismo equipo?{" "}
+              <button
+                className="link"
+                onClick={() => {
+                  localStorage.removeItem(key);
+                  setAnswers({});
+                  setAccepted(false);
+                  setOrder(randomOrder(def));
+                  go(-1);
+                }}
+              >
+                Responder la encuesta
+              </button>
+            </p>
+          )}
         </section>
       )}
     </div>

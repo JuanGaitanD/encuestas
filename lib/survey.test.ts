@@ -88,3 +88,11 @@ test("el orden aleatorio solo mueve las páginas marcadas y queda en el CSV", ()
   const csv = toCsv(d, [{ id: "r", created_at: "2026-11-11T00:00:00Z", answers: { _orden: "1-4-3-5-2", a: "x" } }]);
   assert.equal(csv.replace("﻿", "").trim().split("\r\n")[1], "r,2026-11-11T00:00:00.000Z,1-4-3-5-2,x,,,,");
 });
+
+test("rechaza códigos reservados y más de un «Otro»", () => {
+  assert.throws(() => parseDefinition({ pages: [{ questions: [{ id: "constructor", type: "short", label: "a" }] }] }), /código/);
+  const d = parseDefinition({ pages: [{ questions: [{ id: "m", type: "multi", label: "m", options: ["a", "b"], other: true }] }] });
+  assert.ok(validateAnswers(d, { m: ["a", "Otro: x"] }).ok);
+  assert.equal(validateAnswers(d, { m: ["Otro: x", "Otro: y"] }).ok, false);
+  assert.ok(validateAnswers(d, Object.create({ m: ["zzz"] })).ok); // lo heredado no cuenta como respuesta
+});

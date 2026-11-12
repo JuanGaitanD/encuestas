@@ -13,12 +13,12 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
       {isRegister && (
         <label>
           Nombre
-          <input name="name" required maxLength={80} autoComplete="name" />
+          <input name="name" required maxLength={80} autoComplete="name" defaultValue={state.name} />
         </label>
       )}
       <label>
         Correo
-        <input name="email" type="email" required autoComplete="email" />
+        <input name="email" type="email" required autoComplete="email" defaultValue={state.email} />
       </label>
       <label>
         Contraseña

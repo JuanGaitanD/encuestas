@@ -29,6 +29,7 @@ export default async function Page({ params }: PageProps<"/e/[slug]">) {
         <span>
           Hecha con <Link href="/">Encuestas</Link>, software libre.
         </span>
+        <span>La creó una persona usuaria del servicio. Nunca escribas contraseñas en una encuesta.</span>
         <Link href="/privacidad">Qué se guarda de ti</Link>
       </footer>
     </>

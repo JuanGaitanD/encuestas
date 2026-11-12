@@ -77,7 +77,7 @@ export function parseDefinition(input: unknown): Definition {
       const s = (raw ?? {}) as Record<string, unknown>;
       const id = str(s.id, 40);
       const where = `Página ${pi + 1}, pregunta «${id || "sin código"}»`;
-      if (!ID.test(id)) throw new Error(`${where}: el código debe empezar por letra y usar solo minúsculas, números y guion bajo.`);
+      if (!ID.test(id) || id in Object.prototype) throw new Error(`${where}: el código debe empezar por letra y usar solo minúsculas, números y guion bajo.`);
       if (seen.has(id)) throw new Error(`${where}: el código está repetido.`);
       seen.add(id);
       const type = str(s.type, 10) as QType;
@@ -105,7 +105,7 @@ export function parseDefinition(input: unknown): Definition {
           const rid = str(row.id, 40);
           const rlabel = str(row.label, 500);
           if (!rid && !rlabel) return [];
-          if (!ID.test(rid) || !rlabel) throw new Error(`${where}: revisa la fila «${rid || rlabel}» (código y texto).`);
+          if (!ID.test(rid) || rid in Object.prototype || !rlabel) throw new Error(`${where}: revisa la fila «${rid || rlabel}» (código y texto).`);
           if (rowIds.has(rid)) throw new Error(`${where}: la fila «${rid}» está repetida.`);
           rowIds.add(rid);
           return [{ id: rid, label: rlabel }];
@@ -199,7 +199,11 @@ export function checkAnswer(q: Question, v: unknown): string | null {
     case "single":
       return choiceOk(q, v) ? null : "Elige una de las opciones.";
     case "multi":
-      return Array.isArray(v) && new Set(v).size === v.length && v.every((x) => choiceOk(q, x)) ? null : "Elige entre las opciones.";
+      // Como mucho un «Otro»: sin este tope, una respuesta podría traer miles de textos libres.
+      return Array.isArray(v) && new Set(v).size === v.length && v.every((x) => choiceOk(q, x)) &&
+        v.filter((x) => !q.options!.includes(x)).length <= 1
+        ? null
+        : "Elige entre las opciones.";
     case "scale":
       return Number.isInteger(v) && (v as number) >= 1 && (v as number) <= q.points! ? null : "Elige un valor de la escala.";
     case "matrix": {
@@ -208,7 +212,7 @@ export function checkAnswer(q: Question, v: unknown): string | null {
       const ids = q.rows!.map((r) => r.id);
       const ok = Object.entries(m).every(([k, n]) => ids.includes(k) && Number.isInteger(n) && (n as number) >= 1 && (n as number) <= q.columns!.length);
       if (!ok) return "Respuesta no válida.";
-      return q.required && ids.some((id) => !(id in m)) ? "Responde todas las filas." : null;
+      return q.required && ids.some((id) => !Object.hasOwn(m, id)) ? "Responde todas las filas." : null;
     }
   }
 }
@@ -218,7 +222,8 @@ export function validateAnswers(def: Definition, raw: unknown): { ok: true; answ
   const input = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
   const answers: Answers = {};
   for (const q of questions(def)) {
-    const v = typeof input[q.id] === "string" ? (input[q.id] as string).trim() : input[q.id];
+    const own = Object.hasOwn(input, q.id) ? input[q.id] : undefined;
+    const v = typeof own === "string" ? own.trim() : own;
     const error = checkAnswer(q, v);
     if (error) return { ok: false, error: `«${q.label.slice(0, 60)}»: ${error}` };
     if (q.type !== "info" && !isEmpty(v)) answers[q.id] = v as Answer;

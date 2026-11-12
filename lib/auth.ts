@@ -30,6 +30,7 @@ const sha = (s: string) => createHash("sha256").update(s).digest("hex");
 export async function startSession(userId: string) {
   const token = randomBytes(32).toString("base64url");
   const expires = new Date(Date.now() + DAYS * 864e5);
+  await q("DELETE FROM sessions WHERE expires_at < now()");
   // En la base solo queda el hash: una fuga de la tabla no entrega sesiones válidas.
   await q("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES ($1, $2, $3)", [
     sha(token),
