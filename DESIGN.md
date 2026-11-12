@@ -1,6 +1,6 @@
 # Diseño: «Hoja de respuestas»
 
-El sistema visual de Encuestas sale de la encuesta en papel que todo el mundo ha llenado: la hoja de respuestas con burbujas. Papel claro, tinta grafito y un solo acento, el magenta de la tinta de formulario. La burbuja (vacía con contorno, rellena al elegir) es la marca de selección en toda la app, el isotipo y el motivo de la portada.
+El sistema visual de Encuestas sale de la encuesta en papel que todo el mundo ha llenado: la hoja de respuestas con burbujas. Papel claro, tinta grafito y un solo acento, el magenta de la tinta de formulario. La burbuja (vacía con contorno, rellena al elegir) es la marca de selección en toda la app y el motivo de la portada. El isotipo es esa misma burbuja rellenándose a lápiz: un círculo magenta con un trazo de grafito que se dibuja al cargar y al pasar el cursor.
 
 Todo vive en `app/globals.css`; no hay librería de componentes. Las reglas de abajo son las que hay que respetar al añadir o cambiar una pantalla.
 
@@ -59,14 +59,14 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 
 ## Pantallas
 
-- **Portada (persuadir):** héroe a dos columnas con las capturas reales en marcos dibujados con CSS (pantalla y celular; perspectiva solo desde 1024 px), tira de burbujas que cuelga del borde del héroe, cuerpo en bloques de papeles distintos sobre una rejilla de 12 (Escribe, Publica, franja oscura de la promesa, Analiza con el CSV, lista para investigación, enunciado grande en magenta) y un cierre con un solo objetivo. Las capturas están en `app/capturas/` y se regeneran con la app corriendo.
+- **Portada (persuadir):** héroe a dos columnas con las capturas reales en marcos dibujados con CSS (`.marco.ventana` y `.marco.celular`), siempre rectos y sin perspectiva para que el texto de la captura se lea nítido. Cada captura muestra una pantalla completa, no un recorte a media página, y se sirve sin recomprimir (`unoptimized`), tira de burbujas que cuelga del borde del héroe, cuerpo en bloques de papeles distintos sobre una rejilla de 12 (Escribe, Publica, franja oscura de la promesa, Analiza con el CSV, lista para investigación, enunciado grande en magenta) y un cierre con un solo objetivo. Las capturas están en `app/capturas/` y se regeneran con la app corriendo.
 - **Panel, editor y resultados (operar):** la marca vive en los detalles. Desde 1024 px, la lista de encuestas es una tabla de una línea por encuesta, los datos generales van a dos columnas y la pregunta abierta muestra su vista previa fija a la derecha. Los resultados van en dos columnas en orden de lectura; matrices, textos y cifras cruzan las dos.
-- **Formulario público:** una columna de 680 px, barra de avance fija arriba, sin cabecera del sitio.
+- **Formulario público:** una columna de 680 px, barra de avance fija arriba, sin cabecera del sitio. La pantalla final («Listo») va centrada.
 
 ## Movimiento
 
 - Transiciones de 160 ms con `cubic-bezier(0.22, 1, 0.36, 1)` en color, borde y `transform`; entradas de 220 a 300 ms en lo que se despliega. Nada retrasa una acción.
-- La portada entra una sola vez (el texto sube escalonado, la escena aparece) y su escena sigue al cursor con suavizado (`app/(sitio)/Escena.tsx`): solo con puntero fino, desde 1024 px, y se detiene al llegar a su destino. Las burbujas de la tira se rellenan al pasar el cursor.
+- La portada entra una sola vez (el texto sube escalonado, la escena aparece) y su escena sigue al cursor con suavizado (`app/(sitio)/Escena.tsx`; el celular y la ventana se desplazan unos píxeles en sentidos opuestos, sin giros): solo con puntero fino, desde 1024 px, y se detiene al llegar a su destino. Las burbujas de la tira se rellenan al pasar el cursor.
 - Con `prefers-reduced-motion: reduce` no hay animaciones ni transiciones y la escena queda quieta.
 
 ## Excepciones registradas
