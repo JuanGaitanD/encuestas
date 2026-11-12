@@ -12,10 +12,12 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
       </a>
       <header className="top">
         <Link href="/" className="brand">
-          <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true">
-            <ellipse cx="6" cy="16" rx="3.6" ry="7" fill="none" stroke="#c2185b" strokeWidth="2.4" />
-            <ellipse cx="16" cy="16" rx="4.8" ry="8.2" fill="#1b1a21" />
-            <ellipse cx="26" cy="16" rx="3.6" ry="7" fill="none" stroke="#c2185b" strokeWidth="2.4" />
+          <svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true">
+            <clipPath id="burbuja">
+              <circle cx="16" cy="16" r="10.6" />
+            </clipPath>
+            <path className="lapiz" pathLength={1} clipPath="url(#burbuja)" d="M6 13l6-8L5 21 20 4 7 27 27 7 13 29l15-15-9 15 9-8" fill="none" stroke="#201a1f" strokeWidth="3.6" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="16" cy="16" r="12" fill="none" stroke="#c2185b" strokeWidth="2.6" />
           </svg>
           Encuestas
         </Link>
