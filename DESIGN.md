@@ -8,7 +8,7 @@ Todo vive en `app/globals.css`; no hay librería de componentes. Las reglas de a
 
 - **Ningún texto subrayado**, en reposo, hover ni foco. Un destino suelto responde con fondo tenue; un enlace dentro de un párrafo lleva además un resaltado en reposo (`--marca-suave`), para no depender solo del color.
 - **Elevación declarada una vez:** las fichas llevan un borde de 1 px y ninguna sombra. La única sombra es la de los marcos de dispositivo de la portada, que no llevan borde.
-- **Ningún bloque con más del 60 % de su caja vacío.** Se corrige escalando lo real o recomponiendo, no rellenando. Al medir, el celular dibujado cuenta como figura.
+- **Ningún bloque con más del 60 % de su caja vacío.** Se corrige escalando lo real o recomponiendo, no rellenando. Al medir, el celular dibujado cuenta como figura y un enlace con forma de botón cuenta como botón.
 - **Sin kicker** sobre los títulos, sin tarjetas iguales de icono + título + texto, sin ficha dentro de ficha.
 - **Nada inventado:** la portada solo afirma lo que el código y el `README` respaldan, y sus capturas son de la app real con una encuesta de ejemplo (lo dice la línea de procedencia).
 - **Un solo acento.** El verde (`--exito`) y el rojo (`--peligro`) son estados, no decoración.
@@ -44,12 +44,12 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 ## Espacio y forma
 
 - Escala de espacio: 4 · 8 · 12 · 16 · 24 · 32 · 48 px. Relleno de ficha 24 px (16 en móvil).
-- Radios: 10 px en campos (`--r-control`), 12 px en botones y opciones, 14 px en fichas (`--r-ficha`), 16 px en los bloques de la portada, píldora solo en etiquetas y `chip`.
+- Radios: 10 px en campos (`--r-control`), 12 px en opciones, píldora en botones, 16 px en fichas y bloques (`--r-ficha`), píldora solo en etiquetas y `chip`.
 - Anchos de `main`: 820 px por defecto (lectura, formulario público), 1120 px en panel, editor y resultados, 980 px en acceso, sin límite en la portada. Cabecera y pie cruzan la ventana de lado a lado; su contenido se limita con `--lateral`.
 
 ## Componentes
 
-- **Botones** (`.btn`): relleno magenta el principal (50 px de alto; `.grande` 56 px en la portada), `.ghost` con contorno el secundario, `.text` el terciario, `.danger` el destructivo, `.dashed` para «añadir». Borde de 1,5 px, radio de 12 px, pulsado con `translateY(1px)`. `.avanza` desplaza la flecha 4 px en hover y foco. En la portada los botones son píldoras sin degradado: el principal lleva la flecha dentro de una burbuja blanca y el secundario es un contorno de tinta que se rellena al pasar el cursor.
+- **Botones** (`.btn`): píldora en toda la app, sin degradado. Relleno magenta el principal (50 px de alto; `.grande` 58 px en la portada), `.ghost` es un contorno de tinta que se rellena de tinta al pasar el cursor, `.text` el terciario, `.danger` el destructivo, `.dashed` (radio de ficha) para «añadir». Borde de 1,5 px, pulsado con `translateY(1px)`. La flecha de avanzar va dentro de una burbuja blanca en la portada y en el formulario público («Empezar», «Siguiente», «Enviar»).
 - **Campos:** borde de 1,5 px en `--borde`, 46 px de alto, 16 px de texto. Foco con contorno magenta de 2 px. Error con `aria-invalid` y texto en `--peligro`.
 - **Lista desplegable y número:** solo CSS, sin tocar el marcado. La lista lleva una flecha magenta propia; con puntero fino, y donde el navegador lo soporta (`appearance: base-select`), sus opciones se abren en una ficha del sistema con una burbuja por opción, y en táctil queda el selector nativo del teléfono. El número va en Archivo, con un `#` a la izquierda y sin las flechas nativas (las teclas de flecha siguen sumando y restando). El texto largo del formulario crece con lo que se escribe (`field-sizing`).
 - **Marca de selección** (`.mark`): burbuja de 22 px, rellena de magenta al elegir; la opción entera es una fila tocable de 52 px que se tiñe al elegirse. El control nativo sigue ahí, invisible, para teclado y lectores.
@@ -62,7 +62,7 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 ## Pantallas
 
 - **Portada (persuadir):** héroe a dos columnas con las capturas reales en marcos dibujados con CSS (`.marco.ventana` y `.marco.celular`), siempre rectos y sin perspectiva para que el texto de la captura se lea nítido. Cada captura muestra una pantalla completa, no un recorte a media página, y se sirve sin recomprimir (`unoptimized`), tira de burbujas que cuelga del borde del héroe, cuerpo en bloques de papeles distintos sobre una rejilla de 12 (Escribe a lo ancho, Publica junto al bloque oscuro de la promesa, Analiza con el CSV, lista para investigación, enunciado grande en magenta) y un cierre con un solo objetivo. «Escribe» y «Publica» no llevan capturas sino demostraciones que se pueden usar (`app/(sitio)/Demos.tsx`): los nueve tipos de pregunta y la casilla de consentimiento dentro del celular, hechas con el mismo `Field` del formulario público y sin guardar ni enviar nada. Las capturas están en `app/capturas/` y se regeneran con la app corriendo.
-- **Panel, editor y resultados (operar):** la marca vive en los detalles. Desde 1024 px, la lista de encuestas es una tabla de una línea por encuesta, los datos generales van a dos columnas y la pregunta abierta muestra su vista previa fija a la derecha. Los resultados van en dos columnas en orden de lectura; matrices, textos y cifras cruzan las dos.
+- **Panel, editor y resultados (operar):** hablan como la portada: títulos grandes en Archivo al 82 %, botones píldora, cada encuesta del panel es un bloque con su título grande y su cifra en magenta (página de 960 px), el estado vacío es un bloque rosa con una frase grande y la cabecera de resultados es el bloque oscuro de la portada con la cifra en rosa. Entran con una subida corta y escalonada. Desde 1024 px, la lista de encuestas es una tabla de una línea por encuesta, los datos generales van a dos columnas y la pregunta abierta muestra su vista previa fija a la derecha. Los resultados van en dos columnas en orden de lectura; matrices, textos y cifras cruzan las dos.
 - **Formulario público:** una columna de 680 px, barra de avance fija arriba, sin cabecera del sitio. La pantalla final («Listo») va centrada.
 
 ## Movimiento
@@ -74,7 +74,6 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 
 ## Excepciones registradas
 
-- El botón principal de la app (no el de la portada) lleva un degradado vertical casi imperceptible (8 % de blanco a 8 % de negro) para darle cuerpo sin sombra. Es deliberado.
-- El panel con una sola encuesta mide más del 60 % vacío (62 % a 768 px, 71 % a 1440 px): es una fila de tabla y no se rellena con nada inventado. Se llena sola al haber más encuestas.
+- (Retirada) El botón principal llevaba un degradado vertical casi imperceptible (8 % de blanco a 8 % de negro) para darle cuerpo sin sombra. Es deliberado.
 - En ingreso y registro, el celular del lado oscuro se asoma recortado por abajo para que la ficha no crezca más que el formulario.
 - El cierre de la portada no lleva código QR: quien crea una encuesta ya está frente al computador.
