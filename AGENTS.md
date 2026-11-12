@@ -20,6 +20,14 @@ Español neutro en commits, PR, documentación y textos de interfaz. Identificad
 - SQL con parámetros, nunca concatenado.
 - Sin dependencias nuevas para lo que resuelven unas líneas.
 
+## Diseño
+
+El sistema visual («Hoja de respuestas»: roles de color, tipografía, espacio, radios, botones, movimiento y reglas) está en `DESIGN.md`. Léelo antes de tocar la interfaz. Todo el CSS vive en `app/globals.css`, sin librería de componentes.
+
+- Ningún texto subrayado, elevación con borde o con sombra (no ambos) y ningún bloque con más del 60 % vacío.
+- Las capturas de la portada (`app/capturas/`) son de la app real con una encuesta de ejemplo. Si cambia la interfaz que muestran, se vuelven a tomar; no se dibujan ni se retocan.
+- Para probar en local no debe existir `.env.local` con `DATABASE_URL`: apuntaría a la base de producción.
+
 ## Qué no tocar
 
 - No guardar IP, agente de usuario ni identificadores de quien responde. Es una promesa de la página de privacidad.

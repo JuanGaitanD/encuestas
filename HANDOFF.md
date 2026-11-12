@@ -6,7 +6,10 @@ Primera versión funcional (11 de noviembre de 2026). Probada de punta a punta e
 
 Desplegada en Vercel (proyecto `encuestas`) con base de datos Neon (`encuestas-db`, región iad1) conectada por la integración del Marketplace.
 
-### 11 de noviembre de 2026
+### 12 de noviembre de 2026
+
+Rediseño completo, sin cambios de función ni de datos (rama `rediseno`, pendiente de publicar). Sistema «Hoja de respuestas», descrito en `DESIGN.md`: papel claro, tinta grafito y magenta de formulario; Archivo en títulos y Atkinson Hyperlegible Next en el cuerpo. Portada nueva con capturas reales de la app en marcos dibujados con CSS, cuerpo en bloques y un cierre con un solo objetivo; sus frases nuevas salen del `README` y de la página de privacidad. En escritorio, la lista de encuestas es una tabla, la pregunta abierta del editor muestra la vista previa al lado y los resultados van a dos columnas. No cambiaron `lib/`, `app/actions.ts`, `app/api/`, `app/e/`, `app/Fields.tsx` ni `Editor.tsx`. Probado en local con una encuesta de ejemplo: registro, creación, publicación, respuesta desde un móvil y CSV.
+
 
 Orden aleatorio de páginas configurable por página (`shuffle`). El orden se sortea en el navegador, se valida en el servidor y se guarda con la respuesta bajo la clave reservada `_orden`.
 
