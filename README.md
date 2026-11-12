@@ -14,6 +14,8 @@ Nació para aplicar un cuestionario de investigación a estudiantes de Ingenier�
 - Resumen por pregunta y descarga en CSV, con una columna por pregunta y una por cada fila de las matrices. El código de cada pregunta lo decides tú, así que las columnas llevan nombres útiles para el análisis.
 - Orden aleatorio de páginas: marcas las que deben intercambiarse y cada persona las ve en un orden sorteado. El orden que le tocó a cada quien queda en la columna `orden_paginas` del CSV, para contrabalancear condiciones en un estudio y comprobar después si el orden influyó.
 - Importar y exportar la encuesta completa como JSON.
+- Varias personas en una encuesta: quien la crea añade a otras cuentas por su correo. Si dos guardan a la vez, la segunda recibe un aviso y decide si carga la versión de la otra o guarda la suya encima; nada se pisa en silencio.
+- Servidor MCP para que un asistente (Claude u otro) cree, edite, publique y lea encuestas. Ver «Conectar un asistente».
 
 ## Qué guarda de quien responde
 
@@ -43,13 +45,25 @@ Funciona en cualquier servicio que ejecute Next.js. Necesita una base de datos P
 2. Define la variable de entorno `DATABASE_URL` con la cadena de conexión.
 3. Despliega. Las tablas se crean solas en la primera petición.
 
+## Conectar un asistente
+
+La aplicación expone un servidor MCP en `/api/mcp` (transporte HTTP, sin estado). Entra con tu cuenta, abre «Conectar por MCP» en el panel y crea una clave; la página muestra el comando listo para Claude Code:
+
+```
+claude mcp add --transport http encuestas https://tu-dominio/api/mcp --header "Authorization: Bearer enc_…"
+```
+
+Herramientas: `listar_encuestas`, `ver_encuesta`, `crear_encuesta`, `guardar_encuesta`, `publicar_encuesta` y `descargar_respuestas`. Una clave actúa como la cuenta que la creó y se puede revocar en la misma página. Por MCP no se borran encuestas ni respuestas.
+
 ## Cómo está hecha
 
 | Ruta | Contenido |
 |---|---|
 | `lib/survey.ts` | Modelo de la encuesta: tipos, saneado de la definición, validación de respuestas y CSV. No depende de nada y tiene sus pruebas en `lib/survey.test.ts`. |
 | `lib/db.ts` | Conexión y esquema. |
-| `lib/auth.ts` | Contraseñas con scrypt y sesiones por cookie. |
+| `lib/auth.ts` | Contraseñas con scrypt, sesiones por cookie y claves de acceso para MCP. |
+| `lib/surveys.ts` | Operaciones sobre encuestas con su control de acceso (dueño y editores). Pruebas en `lib/surveys.test.ts`. |
+| `app/api/mcp/route.ts` | Servidor MCP. |
 | `app/actions.ts` | Todas las acciones de servidor: cuentas, encuestas y envío de respuestas. |
 | `app/(sitio)/` | Portada, registro, ingreso y panel con el editor y los resultados. |
 | `app/e/[slug]/` | El formulario público. |
@@ -61,7 +75,9 @@ La misma función (`checkAnswer`) valida cada respuesta en el navegador y en el 
 - No hay recuperación de contraseña ni verificación de correo.
 - No hay límite de intentos de ingreso ni de envíos por persona. El formulario lleva un campo trampa contra bots simples y marca en el navegador que ya se respondió, pero alguien decidido puede responder dos veces.
 - No hay preguntas condicionales.
-- Topes para proteger la base de datos compartida: 20 encuestas por cuenta, 5000 respuestas por encuesta y 60 kB por respuesta. Están en `app/actions.ts`.
+- La edición compartida no es en vivo: no ves lo que escribe la otra persona hasta que guarda y recargas.
+- El servidor MCP no limita peticiones por clave.
+- Topes para proteger la base de datos compartida: 20 encuestas por cuenta, 5000 respuestas por encuesta y 60 kB por respuesta. Están en `app/actions.ts` y `lib/surveys.ts`.
 - La dirección de una encuesta no se puede cambiar cuando está publicada o ya tiene respuestas.
 
 ## Licencia

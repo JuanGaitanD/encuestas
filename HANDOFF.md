@@ -16,6 +16,8 @@ Rediseño de los controles y del editor. `app/Fields.tsx` dibuja cada tipo de pr
 
 Tipo de pregunta «Lista desplegable» (`select`). Borrado de una encuesta desde la lista del panel y de una respuesta concreta desde la página de respuestas (`deleteResponse`, que comprueba que la encuesta sea de quien lo pide).
 
+Editores compartidos y servidor MCP. `lib/surveys.ts` reúne las operaciones sobre encuestas con su control de acceso (tabla `survey_editors`); las usan las acciones del panel y `app/api/mcp/route.ts`. El guardado lleva la versión abierta (`updated_at`) y rechaza con `conflict` si otra persona guardó después. Claves de acceso en `api_tokens` (solo el hash), gestionadas en `/panel/conexion`.
+
 ## Lo que sigue
 
 - Recuperación de contraseña y verificación de correo (requiere un servicio de envío).

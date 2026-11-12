@@ -16,7 +16,7 @@ Español neutro en commits, PR, documentación y textos de interfaz. Identificad
 
 - Conventional Commits. Ámbitos: `app`, `datos`, `auth`, `encuesta`, `docs`.
 - Toda regla sobre qué es una encuesta o una respuesta válida vive en `lib/survey.ts` y lleva prueba. El formulario y el servidor llaman a la misma función; no se duplica la validación.
-- Toda consulta que toca una encuesta desde el panel filtra por `user_id`. Para cargar una encuesta propia se usa `loadOwnSurvey`.
+- Toda operación sobre una encuesta pasa por `lib/surveys.ts`, que comprueba que la persona la creó o es una de sus editoras. El panel y el servidor MCP llaman a esas mismas funciones; en las páginas se carga con `loadSurvey`. Borrar la encuesta y decidir quién la edita es solo de quien la creó.
 - SQL con parámetros, nunca concatenado.
 - Sin dependencias nuevas para lo que resuelven unas líneas.
 
