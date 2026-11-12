@@ -4,6 +4,7 @@ import { currentUser } from "@/lib/auth";
 import { Icon } from "@/app/Icon";
 import escritorio from "@/app/capturas/resumen-escritorio.png";
 import resumen from "@/app/capturas/resumen.png";
+import resumenMovil from "@/app/capturas/resumen-movil.png";
 import movilPagina from "@/app/capturas/movil-pagina1.png";
 import movilListo from "@/app/capturas/movil-listo.png";
 import { Celular } from "./Celular";
@@ -12,6 +13,17 @@ import { Escena } from "./Escena";
 
 // Tira decorativa: la fila de burbujas de una hoja de respuestas. La burbuja rellena de cada grupo es fija.
 const RELLENAS = [1, 3, 0, 2, 4, 1, 3, 0, 2, 4, 1, 0];
+
+// Primeras filas del CSV de la encuesta de ejemplo (algunas columnas).
+const CSV = [
+  "Ingeniería de Software,6,En casa | En la biblioteca,4,4,5,2",
+  "Ingeniería de Software,10,En la biblioteca,3,2,4,3",
+  "Ingeniería Industrial,12,En las salas de la facultad,5,5,4,1",
+  "Ingeniería de Software,8,En una cafetería | En casa,4,3,4,2",
+  "Diseño,15,En casa,3,4,3,3",
+  "Psicología,9,En la biblioteca,4,2,5,2",
+  "Ingeniería de Software,20,En las salas de la facultad | En una cafetería,5,4,4,1",
+];
 
 export default async function Home() {
   const user = await currentUser();
@@ -114,19 +126,16 @@ export default async function Home() {
             <p>Resumen por pregunta en pantalla y un CSV con una columna por ítem, listo para R, Python o una hoja de cálculo.</p>
           </div>
           <figure className="ficha">
-            <Image src={resumen} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="(min-width: 640px) 560px, 92vw" unoptimized />
+            <Image src={resumen} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="(min-width: 1024px) 680px, 92vw" className="no-movil" unoptimized />
+            <Image src={resumenMovil} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="92vw" className="solo-movil" unoptimized />
             <figcaption>El resumen por pregunta, en pantalla.</figcaption>
           </figure>
           <figure className="ficha">
-            <pre className="csv" tabIndex={0} aria-label="Primeras filas y algunas columnas del CSV de la encuesta de ejemplo">
+            <pre className="csv" aria-label="Primeras filas y algunas columnas del CSV de la encuesta de ejemplo">
               <b>carrera,horas,lugar,carga,acuerdo_plan,acuerdo_ayuda,acuerdo_descanso</b>
-              {"\n"}Ingeniería de Software,6,En casa | En la biblioteca,4,4,5,2
-              {"\n"}Ingeniería de Software,10,En la biblioteca,3,2,4,3
-              {"\n"}Ingeniería Industrial,12,En las salas de la facultad,5,5,4,1
-              {"\n"}Ingeniería de Software,8,En una cafetería | En casa,4,3,4,2
-              {"\n"}Diseño,15,En casa,3,4,3,3
-              {"\n"}Psicología,9,En la biblioteca,4,2,5,2
-              {"\n"}Ingeniería de Software,20,En las salas de la facultad | En una cafetería,5,4,4,1
+              {CSV.map((fila) => (
+                <span key={fila}>{fila}</span>
+              ))}
             </pre>
             <figcaption>El CSV: una columna por pregunta y una por cada fila de las matrices.</figcaption>
           </figure>
