@@ -762,6 +762,13 @@ details[open] > .stack { animation: rise 0.22s ease-out both; }
   .option > input:focus-visible + .mark, .segment input:focus-visible + span, .switch input:focus-visible + .track { outline: 2px solid var(--tinta); outline-offset: 2px; }
   .cell input:checked ~ .ctext { color: var(--tinta); font-weight: 700; }
 }
+/* Navegadores sin :focus-visible (Safari anterior a 15.4): los campos conservan el anillo de tinta y el toque no deja el borde pegado. */
+@supports not selector(:focus-visible) {
+  input:focus, textarea:focus, select:focus { outline: 2px solid var(--tinta); outline-offset: 2px; border-color: var(--marca); box-shadow: inset 0 2px 0 rgb(194 24 91 / 0.14); }
+  @media (hover: none) {
+    input:hover:not(:focus):not([aria-invalid]), textarea:hover:not(:focus):not([aria-invalid]), select:hover:not(:focus):not([aria-invalid]) { border-color: var(--borde); }
+  }
+}
 /* Alto contraste de Windows: los fondos desaparecen, así que la selección y los botones se marcan con colores del sistema. */
 @media (forced-colors: active) {
   .mark, .track, .segment span, .tipo, .tag::before { border: 1.5px solid CanvasText; }
