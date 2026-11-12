@@ -55,7 +55,7 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 - **Foco:** contorno de 2 px en `--tinta` con 2 px de separación; blanco sobre los bloques oscuro y magenta. Todo objetivo interactivo mide 44 px o más.
 - **Fichas** (`.card`, `.panel`): hoja blanca, borde de 1 px, sin sombra.
 - **Etiqueta de estado** (`.tag`): píldora con una burbuja; rellena y verde si está publicada.
-- **Celular** (`app/(sitio)/Celular.tsx`, `.marco.celular`): un solo marco de teléfono dibujado con CSS (bisel de tinta, isla, botones laterales, esquinas en proporción) para todos los sitios donde aparece: héroe, «Publica», cierre y acceso. Dentro va una captura real o un control real, nunca un dibujo de la interfaz.
+- **Celular** (`app/(sitio)/Celular.tsx`, `.marco.celular`): un solo marco de teléfono dibujado con CSS (bisel de tinta delgado y de grosor fijo, `--canto: 5px`, igual en todos los tamaños; isla, botones laterales y esquinas en proporción al ancho) para todos los sitios donde aparece: héroe, «Publica», cierre y acceso. Dentro va una captura real o un control real, nunca un dibujo de la interfaz.
 - **Iconos:** una sola familia en `app/Icon.tsx`, trazo de 2 px, siempre al lado de su texto, nunca dentro de un recuadro.
 
 ## Pantallas
@@ -74,4 +74,6 @@ Los neutros van teñidos hacia el magenta. Sobre el bloque oscuro, el texto secu
 ## Excepciones registradas
 
 - El botón principal de la app (no el de la portada) lleva un degradado vertical casi imperceptible (8 % de blanco a 8 % de negro) para darle cuerpo sin sombra. Es deliberado.
+- El panel con una sola encuesta mide más del 60 % vacío (62 % a 768 px, 71 % a 1440 px): es una fila de tabla y no se rellena con nada inventado. Se llena sola al haber más encuestas.
+- En ingreso y registro, el celular del lado oscuro se asoma recortado por abajo para que la ficha no crezca más que el formulario.
 - El cierre de la portada no lleva código QR: quien crea una encuesta ya está frente al computador.
