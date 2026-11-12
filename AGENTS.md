@@ -32,9 +32,11 @@ El sistema visual («Hoja de respuestas»: roles de color, tipografía, espacio,
 
 - Vercel (cuenta personal `juangaitand`) despliega producción desde `main`. Las demás ramas no despliegan: `vercel.json` desactiva las vistas previas porque usarían la base de producción.
 - Una rama se prueba en local con la base embebida, no en una vista previa.
+- Variables de entorno de producción: `DATABASE_URL` y, para el ingreso con Google, `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET` (cliente OAuth de la cuenta personal de Google de Juan, con la URI de redirección `https://encuesta.juandgaitan.com/api/auth/google/callback`). Nunca van en el repositorio.
 
 ## Qué no tocar
 
+- Nunca enlazar una cuenta por un correo que Google no confirmó (`email_verified`): la regla vive en `signInWithGoogle` (`lib/google.ts`) y lleva prueba.
 - No guardar IP, agente de usuario ni identificadores de quien responde. Es una promesa de la página de privacidad.
 - No cambiar el formato de la definición (`Definition`) sin migrar las encuestas guardadas.
 
