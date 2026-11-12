@@ -61,6 +61,8 @@ La misma función (`checkAnswer`) valida cada respuesta en el navegador y en el 
 - No hay recuperación de contraseña ni verificación de correo.
 - No hay límite de intentos de ingreso ni de envíos por persona. El formulario lleva un campo trampa contra bots simples y marca en el navegador que ya se respondió, pero alguien decidido puede responder dos veces.
 - No hay preguntas condicionales.
+- Topes para proteger la base de datos compartida: 20 encuestas por cuenta, 5000 respuestas por encuesta y 60 kB por respuesta. Están en `app/actions.ts`.
+- La dirección de una encuesta no se puede cambiar cuando está publicada o ya tiene respuestas.
 
 ## Licencia
 

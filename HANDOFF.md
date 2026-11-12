@@ -10,10 +10,12 @@ Desplegada en Vercel (proyecto `encuestas`) con base de datos Neon (`encuestas-d
 
 Orden aleatorio de páginas configurable por página (`shuffle`). El orden se sortea en el navegador, se valida en el servidor y se guarda con la respuesta bajo la clave reservada `_orden`.
 
+Revisión de seguridad y pulido visual. Corregido: expresión regular del correo con coste cuadrático, topes de encuestas, respuestas y tamaño, tiempo de respuesta del ingreso, dirección fija al publicar, códigos reservados, cabeceras de seguridad, avance en `sessionStorage`. Interfaz sin subrayados, icono propio y microanimaciones que respetan `prefers-reduced-motion`.
+
 ## Lo que sigue
 
 - Recuperación de contraseña y verificación de correo (requiere un servicio de envío).
-- Límite de intentos de ingreso y de envíos.
+- Límite de tasa por IP para ingreso, registro y envíos (Firewall de Vercel o similar).
 - Preguntas condicionales.
 - Migraciones versionadas en lugar de `CREATE TABLE IF NOT EXISTS`.
 
