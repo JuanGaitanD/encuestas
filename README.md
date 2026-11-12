@@ -7,7 +7,7 @@ Nació para aplicar un cuestionario de investigación a estudiantes de Ingenier�
 ## Qué hace
 
 - Registro e ingreso con correo y contraseña.
-- Editor de encuestas por páginas, con ocho tipos de pregunta: texto corto, texto largo, número, opción única, opción múltiple (ambas con «Otro»), escala, matriz tipo Likert y texto informativo.
+- Editor de encuestas por páginas, con nueve tipos de pregunta: texto corto, texto largo, número, opción única, lista desplegable, opción múltiple (única y múltiple con «Otro»), escala, matriz tipo Likert y texto informativo.
 - Presentación con consentimiento opcional: una casilla que hay que marcar para empezar.
 - Enlace público con la dirección que elijas (`/e/mi-encuesta`). Los borradores solo los ve su autor.
 - El avance de quien responde se guarda en su navegador, para que no lo pierda si recarga.

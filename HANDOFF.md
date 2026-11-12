@@ -14,6 +14,8 @@ Revisión de seguridad y pulido visual. Corregido: expresión regular del correo
 
 Rediseño de los controles y del editor. `app/Fields.tsx` dibuja cada tipo de pregunta y lo comparten el formulario público y la vista previa del editor; `app/Icon.tsx` es la única familia de iconos. Opciones como filas completas, escala en botones numerados, matriz en tabla (ancho) o en fichas por frase (móvil), barra de avance fija. En el editor: selector de tipo con descripción, preguntas plegables, listas de opciones y filas campo a campo, escalas habituales para las matrices, códigos del CSV en «Opciones avanzadas» y aviso al salir con cambios sin guardar. El formato de `Definition` no cambió.
 
+Tipo de pregunta «Lista desplegable» (`select`). Borrado de una encuesta desde la lista del panel y de una respuesta concreta desde la página de respuestas (`deleteResponse`, que comprueba que la encuesta sea de quien lo pide).
+
 ## Lo que sigue
 
 - Recuperación de contraseña y verificación de correo (requiere un servicio de envío).
