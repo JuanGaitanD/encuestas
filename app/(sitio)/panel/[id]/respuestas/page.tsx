@@ -126,7 +126,7 @@ export default async function Page({ params }: PageProps<"/panel/[id]/respuestas
           {questions(survey.definition)
             .filter((qu) => qu.type !== "info")
             .map((qu) => (
-              <section key={qu.id} className={qu.type === "single" || qu.type === "multi" || qu.type === "select" || qu.type === "scale" ? "card" : "card ancha"}>
+              <section key={qu.id} className={qu.type === "matrix" || qu.type === "short" || qu.type === "long" ? "card ancha" : "card"}>
                 <h2 className="qtitle">{qu.label}</h2>
                 <Summary qu={qu} all={all} />
               </section>

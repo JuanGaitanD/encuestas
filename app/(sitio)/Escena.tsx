@@ -3,8 +3,8 @@
 import { useEffect, useRef } from "react";
 
 /**
- * La escena de la portada sigue al cursor: el marco grande se inclina unos grados y el celular,
- * que está «más cerca», se desplaza en sentido contrario. Solo con puntero fino, en pantallas anchas
+ * La escena de la portada sigue al cursor: el celular, que está «más cerca», se desplaza unos píxeles
+ * y la ventana lo hace menos y en sentido contrario. Sin giros, para que las capturas se lean nítidas. Solo con puntero fino, en pantallas anchas
  * y sin «reducir movimiento»; sin JS la escena queda en su pose de reposo.
  */
 export function Escena({ children }: { children: React.ReactNode }) {
@@ -21,8 +21,6 @@ export function Escena({ children }: { children: React.ReactNode }) {
       // Al llegar se ajusta al destino exacto y se detiene: no hay bucle con el cursor quieto.
       x = moving ? x + (tx - x) * 0.08 : tx;
       y = moving ? y + (ty - y) * 0.08 : ty;
-      el.style.setProperty("--gy", `${(x * 4).toFixed(2)}deg`);
-      el.style.setProperty("--gx", `${(-y * 2.5).toFixed(2)}deg`);
       el.style.setProperty("--px", `${(-x * 12).toFixed(1)}px`);
       el.style.setProperty("--py", `${(-y * 8).toFixed(1)}px`);
       frame = moving ? requestAnimationFrame(paint) : 0;

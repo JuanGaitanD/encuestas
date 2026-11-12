@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { currentUser } from "@/lib/auth";
 import { Icon } from "@/app/Icon";
-import editor from "@/app/capturas/editor.png";
+import escritorio from "@/app/capturas/resumen-escritorio.png";
 import tipos from "@/app/capturas/tipos.png";
 import resumen from "@/app/capturas/resumen.png";
 import movilIntro from "@/app/capturas/movil-intro.png";
@@ -42,20 +42,22 @@ export default async function Home() {
         </div>
 
         <Escena>
-          <div className="marco portatil">
+          <div className="marco ventana">
             <Image
-              src={editor}
-              alt="El editor: una pregunta de opción múltiple con sus opciones y, debajo, la vista previa de cómo la verá quien responde."
-              sizes="(min-width: 1024px) 760px, 92vw"
+              src={escritorio}
+              alt="La página de respuestas de una encuesta de ejemplo: el total recibido, el botón para descargar el CSV y el conteo de cada opción en barras."
+              sizes="(min-width: 1024px) 640px, 92vw"
               preload
+              unoptimized
             />
           </div>
           <div className="marco celular">
             <Image
               src={movilPagina}
-              alt="La misma encuesta en un celular: barra de avance, opciones en filas grandes y dos respuestas marcadas."
-              sizes="(min-width: 1024px) 250px, 32vw"
+              alt="La misma encuesta en un celular: barra de avance y una pregunta con sus opciones en filas grandes, una de ellas marcada."
+              sizes="(min-width: 1024px) 270px, 34vw"
               preload
+              unoptimized
             />
           </div>
         </Escena>
@@ -79,7 +81,9 @@ export default async function Home() {
           <h2>Escribe</h2>
           <p>Texto, número, opción única o múltiple, escalas y matrices tipo Likert, repartidas en páginas.</p>
           <figure className="ficha">
-            <Image src={tipos} alt="El selector de tipo de pregunta del editor, con una descripción corta de cada tipo." sizes="(min-width: 1024px) 640px, 92vw" />
+            <div className="marco ventana">
+              <Image src={tipos} alt="El selector de tipo de pregunta del editor, con una descripción corta de cada tipo." sizes="(min-width: 1024px) 620px, 92vw" unoptimized />
+            </div>
             <figcaption>Nueve tipos de pregunta, cada uno con su vista previa mientras escribes.</figcaption>
           </figure>
         </section>
@@ -91,7 +95,9 @@ export default async function Home() {
             /e/<b>mi-encuesta</b>
           </span>
           <figure className="ficha">
-            <Image src={movilIntro} alt="La presentación de la encuesta en un celular, con la casilla de consentimiento antes del botón «Empezar»." sizes="(min-width: 640px) 400px, 92vw" />
+            <div className="marco celular">
+              <Image src={movilIntro} alt="La presentación de la encuesta en un celular, con la casilla de consentimiento antes del botón «Empezar»." sizes="290px" unoptimized />
+            </div>
             <figcaption>La presentación y la casilla de consentimiento, en el celular.</figcaption>
           </figure>
         </section>
@@ -112,7 +118,7 @@ export default async function Home() {
             <p>Resumen por pregunta en pantalla y un CSV con una columna por ítem, listo para R, Python o una hoja de cálculo.</p>
           </div>
           <figure className="ficha">
-            <Image src={resumen} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="(min-width: 640px) 560px, 92vw" />
+            <Image src={resumen} alt="El resumen de respuestas: barras con el conteo de cada opción en tres preguntas de la encuesta de ejemplo." sizes="(min-width: 640px) 560px, 92vw" unoptimized />
             <figcaption>El resumen por pregunta, en pantalla.</figcaption>
           </figure>
           <figure className="ficha">
@@ -174,7 +180,7 @@ export default async function Home() {
           </Link>
         </div>
         <div className="marco celular">
-          <Image src={movilListo} alt="La pantalla final que ve quien responde: una marca de verificación y el mensaje de agradecimiento." sizes="250px" />
+          <Image src={movilListo} alt="La pantalla final que ve quien responde: una marca de verificación y el mensaje de agradecimiento." sizes="260px" unoptimized />
         </div>
       </section>
     </div>
