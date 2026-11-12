@@ -6,6 +6,9 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
   const user = await currentUser();
   return (
     <>
+      <a href="#contenido" className="skip">
+        Saltar al contenido
+      </a>
       <header className="top">
         <Link href="/" className="brand">
           <svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true">
@@ -34,7 +37,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
           )}
         </nav>
       </header>
-      <main>{children}</main>
+      <main id="contenido">{children}</main>
       <footer className="foot">
         <span>Software libre con licencia MIT.</span>
         <a href="https://github.com/JuanGaitanD/encuestas">Código en GitHub</a>

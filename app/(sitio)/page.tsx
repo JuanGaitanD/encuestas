@@ -5,11 +5,10 @@ export default async function Home() {
   const user = await currentUser();
   return (
     <div className="hero">
-      <p className="eyebrow">Código abierto · sin anuncios · sin rastreo</p>
       <h1>Haz tu encuesta y quédate con tus datos.</h1>
       <p className="lead">
         Escribe las preguntas, comparte un enlace y descarga las respuestas en CSV. Quien responde no necesita cuenta ni
-        deja su correo.
+        deja su correo. Código abierto, sin anuncios y sin rastreo.
       </p>
       <div className="row">
         <Link href={user ? "/panel" : "/registro"} className="btn">
