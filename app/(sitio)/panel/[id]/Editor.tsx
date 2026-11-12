@@ -442,6 +442,9 @@ export function Editor({ survey, editors: initialEditors }: { survey: Survey; ed
           <Link href={`/panel/${survey.id}/respuestas`} className="btn ghost small">
             Respuestas
           </Link>
+          <Link href={`/panel/${survey.id}/compartir`} className="btn ghost small">
+            Compartir
+          </Link>
           <a href={`/e/${survey.slug}`} target="_blank" className="btn ghost small">
             Vista previa <Icon name="external" size={18} />
           </a>
