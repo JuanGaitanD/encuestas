@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { login, register, type FormState } from "@/app/actions";
 import matriz from "@/app/capturas/movil-pagina2.png";
+import { Celular } from "./Celular";
 
 export function AuthForm({ mode }: { mode: "login" | "register" }) {
   const isRegister = mode === "register";
@@ -58,9 +59,9 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         <p>
           <strong>Haz tu encuesta</strong> y quédate con tus datos.
         </p>
-        <div className="marco celular">
+        <Celular>
           <Image src={matriz} alt="Una pregunta de matriz respondida desde un celular: cada frase con sus cinco niveles en una fila." sizes="230px" unoptimized />
-        </div>
+        </Celular>
       </aside>
     </div>
   );
