@@ -47,6 +47,9 @@ export default async function Panel({ searchParams }: PageProps<"/panel">) {
               <Link href={`/panel/${s.id}/respuestas`} className="count">
                 <strong>{s.n}</strong> {s.n === 1 ? "respuesta" : "respuestas"}
               </Link>
+              <Link href={`/panel/${s.id}/compartir`} className="btn ghost small">
+                Compartir
+              </Link>
               {s.owner && (
               <ConfirmButton
                 action={deleteSurvey.bind(null, s.id)}
