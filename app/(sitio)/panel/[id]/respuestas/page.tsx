@@ -4,7 +4,7 @@ import { ConfirmButton } from "@/app/ConfirmButton";
 import { Icon } from "@/app/Icon";
 import { q } from "@/lib/db";
 import { ORDER_KEY, hasShuffle, questions, type Answers, type Question } from "@/lib/survey";
-import { loadOwnSurvey } from "@/lib/own-survey";
+import { loadSurvey } from "@/lib/own-survey";
 
 export const metadata = { title: "Respuestas" };
 
@@ -67,7 +67,7 @@ function Summary({ qu, all }: { qu: Question; all: Answers[] }) {
 }
 
 export default async function Page({ params }: PageProps<"/panel/[id]/respuestas">) {
-  const survey = await loadOwnSurvey((await params).id);
+  const survey = await loadSurvey((await params).id);
   const rows = await q<{ id: string; created_at: string | Date; answers: Answers }>(
     "SELECT id, created_at, answers FROM responses WHERE survey_id = $1 ORDER BY created_at DESC",
     [survey.id],

@@ -71,4 +71,16 @@ export async function requireUser(): Promise<User> {
 }
 
 export const newId = () => randomUUID();
-export const newSlug = () => randomBytes(5).toString("hex");
+
+/** Crea una clave de acceso para MCP. El texto de la clave solo existe en este momento: en la base queda su hash. */
+export async function createToken(userId: string, name: string): Promise<string> {
+  const token = `enc_${randomBytes(32).toString("base64url")}`;
+  await q("INSERT INTO api_tokens (id, user_id, name, token_hash) VALUES ($1, $2, $3, $4)", [newId(), userId, name, sha(token)]);
+  return token;
+}
+
+export async function userFromToken(token: string): Promise<User | null> {
+  if (!token.startsWith("enc_") || token.length > 100) return null;
+  const rows = await q<User>("SELECT u.id, u.email, u.name FROM api_tokens t JOIN users u ON u.id = t.user_id WHERE t.token_hash = $1", [sha(token)]);
+  return rows[0] ?? null;
+}

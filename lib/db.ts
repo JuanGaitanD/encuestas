@@ -32,6 +32,18 @@ const SCHEMA = [
      answers jsonb NOT NULL,
      created_at timestamptz NOT NULL DEFAULT now())`,
   `CREATE INDEX IF NOT EXISTS responses_survey ON responses(survey_id)`,
+  // Personas que pueden editar una encuesta además de quien la creó.
+  `CREATE TABLE IF NOT EXISTS survey_editors (
+     survey_id uuid NOT NULL REFERENCES surveys(id) ON DELETE CASCADE,
+     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     PRIMARY KEY (survey_id, user_id))`,
+  // Claves para entrar por MCP sin sesión de navegador. Solo se guarda el hash.
+  `CREATE TABLE IF NOT EXISTS api_tokens (
+     id uuid PRIMARY KEY,
+     user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+     name text NOT NULL,
+     token_hash text UNIQUE NOT NULL,
+     created_at timestamptz NOT NULL DEFAULT now())`,
 ];
 
 async function connect(): Promise<Run> {

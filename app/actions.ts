@@ -3,17 +3,17 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { q } from "@/lib/db";
-import { endSession, hashPassword, newId, newSlug, requireUser, startSession, verifyPassword } from "@/lib/auth";
-import { ORDER_KEY, emptyDefinition, hasShuffle, orderLabel, parseDefinition, validOrder, validateAnswers, type Definition } from "@/lib/survey";
+import { createToken, endSession, hashPassword, newId, requireUser, startSession, verifyPassword } from "@/lib/auth";
+import * as S from "@/lib/surveys";
+import { ORDER_KEY, hasShuffle, orderLabel, validOrder, validateAnswers, type Definition } from "@/lib/survey";
 
 // name y email vuelven al formulario para no obligar a escribirlos de nuevo tras un error.
 export type FormState = { error?: string; name?: string; email?: string };
-export type Result = { ok: true } | { ok: false; error: string };
+type Result = S.Result;
 
 const field = (data: FormData, name: string) => String(data.get(name) ?? "").trim();
 const DUMMY_HASH = hashPassword("sin-cuenta");
 // Topes para que una cuenta o un bot no agoten la base de datos que comparten todas las encuestas.
-const MAX_SURVEYS_PER_USER = 20;
 const MAX_RESPONSES_PER_SURVEY = 5000;
 const MAX_RESPONSE_BYTES = 60_000;
 
@@ -56,73 +56,62 @@ export async function logout() {
 
 export async function createSurvey() {
   const user = await requireUser();
-  const [{ n }] = await q<{ n: number }>("SELECT count(*)::int AS n FROM surveys WHERE user_id = $1", [user.id]);
-  if (n >= MAX_SURVEYS_PER_USER) redirect("/panel?limite=1");
-  const id = newId();
-  await q("INSERT INTO surveys (id, user_id, slug, title, definition) VALUES ($1, $2, $3, $4, $5::jsonb)", [
-    id,
-    user.id,
-    newSlug(),
-    "Encuesta sin título",
-    JSON.stringify(emptyDefinition()),
-  ]);
-  redirect(`/panel/${id}`);
+  const r = await S.createSurvey(user.id);
+  redirect(r.ok ? `/panel/${r.id}` : "/panel?limite=1");
 }
 
-export async function saveSurvey(id: string, title: string, slug: string, definition: unknown): Promise<Result> {
+export async function saveSurvey(id: string, title: string, slug: string, definition: unknown, base?: string | null) {
   const user = await requireUser();
-  const cleanTitle = String(title ?? "").trim().slice(0, 200);
-  const cleanSlug = String(slug ?? "").trim().toLowerCase();
-  if (!cleanTitle) return { ok: false, error: "La encuesta necesita un título." };
-  if (!/^[a-z0-9](?:[a-z0-9-]{1,58}[a-z0-9])$/.test(cleanSlug))
-    return { ok: false, error: "La dirección admite de 3 a 60 letras minúsculas, números y guiones." };
-  let def: Definition;
-  try {
-    def = parseDefinition(definition);
-  } catch (e) {
-    return { ok: false, error: (e as Error).message };
-  }
-  const [current] = await q<{ slug: string; locked: boolean }>(
-    `SELECT slug, (published OR EXISTS (SELECT 1 FROM responses r WHERE r.survey_id = s.id)) AS locked
-     FROM surveys s WHERE id = $1 AND user_id = $2`,
-    [id, user.id],
-  );
-  if (!current) return { ok: false, error: "No se encontró la encuesta." };
-  // Una dirección ya compartida no se libera: otra cuenta podría ocuparla y recibir a quienes tienen el enlace.
-  if (current.locked && current.slug !== cleanSlug)
-    return { ok: false, error: "La dirección no se puede cambiar cuando la encuesta está publicada o ya tiene respuestas." };
-  const taken = await q("SELECT 1 FROM surveys WHERE slug = $1 AND id <> $2", [cleanSlug, id]);
-  if (taken.length) return { ok: false, error: "Esa dirección ya la usa otra encuesta." };
-  const rows = await q(
-    `UPDATE surveys SET title = $1, slug = $2, definition = $3::jsonb, updated_at = now()
-     WHERE id = $4 AND user_id = $5 RETURNING id`,
-    [cleanTitle, cleanSlug, JSON.stringify(def), id, user.id],
-  );
-  if (!rows.length) return { ok: false, error: "No se encontró la encuesta." };
-  revalidatePath(`/panel/${id}`);
-  return { ok: true };
+  const r = await S.saveSurvey(user.id, id, title, slug, definition, base);
+  if (r.ok) revalidatePath(`/panel/${id}`);
+  return r;
 }
 
 export async function setPublished(id: string, published: boolean) {
   const user = await requireUser();
-  await q("UPDATE surveys SET published = $1, updated_at = now() WHERE id = $2 AND user_id = $3", [published, id, user.id]);
+  await S.setPublished(user.id, id, published);
   revalidatePath(`/panel/${id}`);
 }
 
 export async function deleteSurvey(id: string) {
   const user = await requireUser();
-  await q("DELETE FROM surveys WHERE id = $1 AND user_id = $2", [id, user.id]);
+  await S.deleteSurvey(user.id, id);
   redirect("/panel");
 }
 
 export async function deleteResponse(surveyId: string, responseId: string) {
   const user = await requireUser();
-  // Solo borra si la respuesta es de una encuesta de quien lo pide.
-  await q(
-    "DELETE FROM responses r USING surveys s WHERE r.id = $1 AND r.survey_id = s.id AND s.id = $2 AND s.user_id = $3",
-    [responseId, surveyId, user.id],
-  );
+  await S.deleteResponse(user.id, surveyId, responseId);
   revalidatePath(`/panel/${surveyId}/respuestas`);
+}
+
+export async function addEditor(surveyId: string, email: string): Promise<S.Result<{ editors: S.Editor[] }>> {
+  const user = await requireUser();
+  const r = await S.addEditor(user.id, surveyId, email);
+  return r.ok ? { ok: true, editors: await S.listEditors(surveyId) } : r;
+}
+
+export async function removeEditor(surveyId: string, editorId: string): Promise<S.Result<{ editors: S.Editor[] }>> {
+  const user = await requireUser();
+  const r = await S.removeEditor(user.id, surveyId, editorId);
+  return r.ok ? { ok: true, editors: await S.listEditors(surveyId) } : r;
+}
+
+const MAX_TOKENS = 10;
+
+export async function newToken(name: string): Promise<S.Result<{ token: string }>> {
+  const user = await requireUser();
+  const [{ n }] = await q<{ n: number }>("SELECT count(*)::int AS n FROM api_tokens WHERE user_id = $1", [user.id]);
+  if (n >= MAX_TOKENS) return { ok: false, error: `Máximo ${MAX_TOKENS} claves. Revoca alguna para crear otra.` };
+  const token = await createToken(user.id, String(name ?? "").trim().slice(0, 60) || "Sin nombre");
+  revalidatePath("/panel/conexion");
+  return { ok: true, token };
+}
+
+export async function revokeToken(id: string) {
+  const user = await requireUser();
+  await q("DELETE FROM api_tokens WHERE id = $1 AND user_id = $2", [id, user.id]);
+  revalidatePath("/panel/conexion");
 }
 
 // ponytail: sin límite por IP ni captcha; el campo trampa frena los bots

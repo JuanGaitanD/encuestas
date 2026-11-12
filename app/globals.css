@@ -198,6 +198,10 @@ details.panel[open] { padding-bottom: 18px; }
   position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 10px; padding: 10px max(20px, calc(50vw - 370px));
   background: var(--card); border-top: 1px solid var(--line); z-index: 5;
 }
+.inviterow { display: flex; align-items: flex-end; gap: 10px; flex-wrap: wrap; }
+.inviterow .btn { min-height: 46px; }
+.error:empty { display: none; }
+.codeblock { display: block; font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; overflow-wrap: anywhere; user-select: all; }
 .sharelink { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
 .url { font-weight: 600; overflow-wrap: anywhere; }
 

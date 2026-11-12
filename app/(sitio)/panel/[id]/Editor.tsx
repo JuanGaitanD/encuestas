@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { deleteSurvey, saveSurvey, setPublished } from "@/app/actions";
+import { addEditor, deleteSurvey, removeEditor, saveSurvey, setPublished } from "@/app/actions";
 import { Field } from "@/app/Fields";
 import { Icon, type IconName } from "@/app/Icon";
 import { TYPES, type Answer, type Definition, type Page, type QType, type Question } from "@/lib/survey";
 
-type Survey = { id: string; title: string; slug: string; published: boolean; definition: Definition };
+type Survey = { id: string; title: string; slug: string; published: boolean; definition: Definition; owner: boolean; version: string };
+type Person = { id: string; name: string; email: string };
 
 const HINTS: Record<QType, string> = {
   short: "Una línea: un nombre, una ciudad.",
@@ -312,7 +313,7 @@ function QuestionCard(p: {
   );
 }
 
-export function Editor({ survey }: { survey: Survey }) {
+export function Editor({ survey, editors: initialEditors }: { survey: Survey; editors: Person[] }) {
   const [title, setTitle] = useState(survey.title);
   const [slug, setSlug] = useState(survey.slug);
   const [def, setDef] = useState(survey.definition);
@@ -324,6 +325,13 @@ export function Editor({ survey }: { survey: Survey }) {
   const [json, setJson] = useState("");
   const [copied, setCopied] = useState(false);
   const [pending, start] = useTransition();
+  // Versión abierta: si otra persona guarda después, el servidor avisa en vez de pisar su trabajo.
+  const [version, setVersion] = useState(survey.version);
+  const [conflict, setConflict] = useState(false);
+  const leaving = useRef(false);
+  const [editors, setEditors] = useState(initialEditors);
+  const [invite, setInvite] = useState("");
+  const [inviteError, setInviteError] = useState("");
 
   // El dominio solo se conoce en el navegador; se completa tras montar para no romper la hidratación.
   const [origin, setOrigin] = useState("");
@@ -332,7 +340,7 @@ export function Editor({ survey }: { survey: Survey }) {
 
   useEffect(() => {
     if (!dirty) return;
-    const warn = (e: BeforeUnloadEvent) => e.preventDefault();
+    const warn = (e: BeforeUnloadEvent) => void (leaving.current || e.preventDefault());
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [dirty]);
@@ -383,13 +391,25 @@ export function Editor({ survey }: { survey: Survey }) {
       questions: p.questions.map((x) => ({ ...x, options: x.options?.filter((o) => o.trim()), columns: x.columns?.filter((c) => c.trim()), rows: x.rows?.filter((r) => r.label.trim()) })),
     })),
   });
-  const persist = async () => {
-    const r = await saveSurvey(survey.id, title, slug, tidy(def));
-    if (r.ok) setDirty(false);
-    else setStatus({ kind: "error", text: r.error });
+  const persist = async (force = false) => {
+    const r = await saveSurvey(survey.id, title, slug, tidy(def), force ? null : version);
+    setConflict(!r.ok && !!r.conflict);
+    if (r.ok) {
+      setDirty(false);
+      setVersion(r.version);
+    } else setStatus({ kind: "error", text: r.error });
     return r.ok;
   };
-  const save = () => start(async () => void ((await persist()) && setStatus({ kind: "ok", text: "Cambios guardados." })));
+  const people = (action: Promise<{ ok: true; editors: Person[] } | { ok: false; error: string }>) =>
+    start(async () => {
+      const r = await action;
+      setInviteError(r.ok ? "" : r.error);
+      if (r.ok) {
+        setEditors(r.editors);
+        setInvite("");
+      }
+    });
+  const save = (force = false) => start(async () => void ((await persist(force)) && setStatus({ kind: "ok", text: "Cambios guardados." })));
   const togglePublish = () =>
     start(async () => {
       if (dirty && !(await persist())) return;
@@ -587,6 +607,53 @@ export function Editor({ survey }: { survey: Survey }) {
         </div>
       </details>
 
+      {survey.owner ? (
+        <details className="panel">
+          <summary>Personas que pueden editar ({editors.length + 1})</summary>
+          <div className="stack">
+            <p className="muted">
+              Quien añadas podrá cambiar las preguntas, publicar, ver las respuestas y borrarlas. Solo tú puedes borrar la encuesta y decidir quién la edita. La
+              otra persona necesita una cuenta aquí.
+            </p>
+            {editors.length > 0 && (
+              <ul className="records">
+                {editors.map((p) => (
+                  <li key={p.id}>
+                    <span className="grow">
+                      {p.name} <span className="muted">{p.email}</span>
+                    </span>
+                    <button type="button" className="iconbtn danger" aria-label={`Quitar a ${p.name}`} title="Quitar" disabled={pending} onClick={() => people(removeEditor(survey.id, p.id))}>
+                      <Icon name="close" size={18} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <form
+              className="inviterow"
+              onSubmit={(e) => {
+                e.preventDefault();
+                people(addEditor(survey.id, invite));
+              }}
+            >
+              <label className="grow">
+                Correo de su cuenta
+                <input type="email" required value={invite} autoComplete="off" aria-invalid={inviteError ? true : undefined} aria-describedby="invite-error" onChange={(e) => setInvite(e.target.value)} />
+              </label>
+              <button className="btn ghost" disabled={pending}>
+                <Icon name="plus" size={18} /> Añadir
+              </button>
+            </form>
+            <p className="error" id="invite-error" role="alert">
+              {inviteError}
+            </p>
+          </div>
+        </details>
+      ) : (
+        <p className="muted">Editas esta encuesta porque quien la creó te dio acceso. Solo esa persona puede borrarla o añadir a alguien más.</p>
+      )}
+
+      {survey.owner && (
       <details className="panel">
         <summary>Borrar la encuesta</summary>
         <div className="stack">
@@ -598,6 +665,7 @@ export function Editor({ survey }: { survey: Survey }) {
           </div>
         </div>
       </details>
+      )}
 
       <div className="savebar">
         <div className="grow">
@@ -622,12 +690,25 @@ export function Editor({ survey }: { survey: Survey }) {
             <span className="muted">Borrador: solo tú puedes verla.</span>
           )}
         </div>
-        <button type="button" className="btn ghost small" onClick={togglePublish} disabled={pending}>
-          {published ? "Dejar de publicar" : "Publicar"}
-        </button>
-        <button type="button" className="btn small" onClick={save} disabled={pending || !dirty} aria-busy={pending}>
-          {pending ? "Guardando…" : "Guardar"}
-        </button>
+        {conflict ? (
+          <>
+            <button type="button" className="btn ghost small" disabled={pending} onClick={() => ((leaving.current = true), window.location.reload())}>
+              Cargar su versión
+            </button>
+            <button type="button" className="btn small" disabled={pending} onClick={() => confirm("Se perderá lo que guardó la otra persona. ¿Guardar tu versión encima?") && save(true)}>
+              Guardar la mía
+            </button>
+          </>
+        ) : (
+          <>
+            <button type="button" className="btn ghost small" onClick={togglePublish} disabled={pending}>
+              {published ? "Dejar de publicar" : "Publicar"}
+            </button>
+            <button type="button" className="btn small" onClick={() => save()} disabled={pending || !dirty} aria-busy={pending}>
+              {pending ? "Guardando…" : "Guardar"}
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

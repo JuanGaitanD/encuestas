@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "test": "node --test lib/survey.test.ts"
+    "test": "node --test lib/survey.test.ts lib/surveys.test.ts"
   },
   "dependencies": {
     "@electric-sql/pglite": "^0.5.16",
