@@ -3,11 +3,11 @@ import Link from "next/link";
 import { currentUser } from "@/lib/auth";
 import { Icon } from "@/app/Icon";
 import escritorio from "@/app/capturas/resumen-escritorio.png";
-import tipos from "@/app/capturas/tipos.png";
 import resumen from "@/app/capturas/resumen.png";
-import movilIntro from "@/app/capturas/movil-intro.png";
 import movilPagina from "@/app/capturas/movil-pagina1.png";
 import movilListo from "@/app/capturas/movil-listo.png";
+import { Celular } from "./Celular";
+import { DemoConsentimiento, DemoTipos } from "./Demos";
 import { Escena } from "./Escena";
 
 // Tira decorativa: la fila de burbujas de una hoja de respuestas. La burbuja rellena de cada grupo es fija.
@@ -51,15 +51,15 @@ export default async function Home() {
               unoptimized
             />
           </div>
-          <div className="marco celular">
+          <Celular>
             <Image
               src={movilPagina}
               alt="La misma encuesta en un celular: barra de avance y una pregunta con sus opciones en filas grandes, una de ellas marcada."
-              sizes="(min-width: 1024px) 270px, 34vw"
+              sizes="(min-width: 1024px) 240px, 34vw"
               preload
               unoptimized
             />
-          </div>
+          </Celular>
         </Escena>
 
         <div className="tira" aria-hidden="true">
@@ -67,7 +67,7 @@ export default async function Home() {
             <span key={n} className="tira-grupo">
               {String(n + 1).padStart(2, "0")}
               {["A", "B", "C", "D", "E"].map((letra, i) => (
-                <i key={letra} className={i === llena ? "llena" : undefined}>
+                <i key={letra} className={i === llena ? "llena" : undefined} style={{ "--n": n } as React.CSSProperties}>
                   {letra}
                 </i>
               ))}
@@ -80,12 +80,10 @@ export default async function Home() {
         <section className="bloque bloque-escribe" id="escribe">
           <h2>Escribe</h2>
           <p>Texto, número, opción única o múltiple, escalas y matrices tipo Likert, repartidas en páginas.</p>
-          <figure className="ficha">
-            <div className="marco ventana">
-              <Image src={tipos} alt="El selector de tipo de pregunta del editor, con una descripción corta de cada tipo." sizes="(min-width: 1024px) 620px, 92vw" unoptimized />
-            </div>
-            <figcaption>Nueve tipos de pregunta, cada uno con su vista previa mientras escribes.</figcaption>
-          </figure>
+          <div className="ficha">
+            <DemoTipos />
+            <p className="pie">Nueve tipos de pregunta. Pruébalos: es el mismo control que verá quien responde.</p>
+          </div>
         </section>
 
         <section className="bloque bloque-publica" id="publica">
@@ -94,12 +92,10 @@ export default async function Home() {
           <span className="direccion">
             /e/<b>mi-encuesta</b>
           </span>
-          <figure className="ficha">
-            <div className="marco celular">
-              <Image src={movilIntro} alt="La presentación de la encuesta en un celular, con la casilla de consentimiento antes del botón «Empezar»." sizes="290px" unoptimized />
-            </div>
-            <figcaption>La presentación y la casilla de consentimiento, en el celular.</figcaption>
-          </figure>
+          <div className="ficha">
+            <DemoConsentimiento />
+            <p className="pie">Marca la casilla y pulsa «Empezar»: así se ve en el celular.</p>
+          </div>
         </section>
 
         <section className="bloque bloque-promesa">
@@ -179,9 +175,9 @@ export default async function Home() {
             {accion} <Icon name="arrow" />
           </Link>
         </div>
-        <div className="marco celular">
+        <Celular>
           <Image src={movilListo} alt="La pantalla final que ve quien responde: una marca de verificación y el mensaje de agradecimiento." sizes="260px" unoptimized />
-        </div>
+        </Celular>
       </section>
     </div>
   );
